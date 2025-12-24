@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pokedéx – Plantilla HTML</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #141a2e;
+      --card-2: #10162a;
+      --text: #e8ecf1;
+      --muted: #a7b1c2;
+      --accent: #ffcc00;
+      --chip: #1e2a4a;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+    }
+    #dlgDraft { white-space: pre-line; }
+
+    *, *::before, *::after{ box-sizing: border-box; }
+    body{
+      margin:0;
+      background: linear-gradient(180deg,#0a0f20,#0b142c 60%, #0d1838);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    header{
+      position: sticky; top:0; z-index: 10;
+      backdrop-filter: blur(8px);
+      background: rgba(10,15,32,.75);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .wrap{ max-width: 1100px; margin:0 auto; padding: 20px; }
+    .bar{ display:grid; gap:12px; grid-template-columns: 1fr 220px 140px; align-items:center; }
+    .title{ font-weight:700; font-size: clamp(20px, 2.4vw, 28px); letter-spacing:.3px; }
+
+    input[type="search"], select{
+      width:100%; padding:12px 14px; border-radius: 12px; background: var(--card); border:1px solid rgba(255,255,255,.08); color:var(--text);
+      outline:none; transition:.2s border-color, .2s background;
+    }
+    input[type="search"]::placeholder{ color: #8e99ad; }
+    select{
+      appearance:none;
+      background-image: linear-gradient(45deg, transparent 50%, #8ea2d0 50%), linear-gradient(135deg, #8ea2d0 50%, transparent 50%), linear-gradient(to right, transparent, transparent);
+      background-position: calc(100% - 20px) calc(1.2em), calc(100% - 14px) calc(1.2em), 100% 0;
+      background-size: 6px 6px, 6px 6px, 2.5em 2.5em; background-repeat: no-repeat;
+    }
+
+    main{ padding: 26px 20px 80px; }
+    .grid{ max-width: 1100px; margin:0 auto; display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+
+    .card{
+      position:relative;
+      background: linear-gradient(180deg, var(--card), var(--card-2));
+      border:1px solid rgba(255,255,255,.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .card:hover{ transform: translateY(-2px); box-shadow: 0 14px 36px rgba(0,0,0,.45); }
+
+    .thumb{
+      width:100%;
+      aspect-ratio: 4/3;
+      height:auto;
+      object-fit: contain;
+      object-position: center;
+      display:block;
+      background:#0b1327;
+      padding: 10px;
+    }
+
+    .body{ padding:14px 14px 16px; }
+    .row{ display:flex; align-items:center; justify-content: space-between; gap:10px; }
+    .name{ font-weight: 700; font-size: 18px; }
+    .dex{ color: var(--muted); font-size: 12px; letter-spacing:.3px; }
+    .chips{ display:flex; gap:8px; flex-wrap: wrap; margin-top:8px; }
+    .chip{
+      background: var(--chip);
+      padding:6px 10px; border-radius: 999px; font-size:12px; color:#cfe0ff;
+      border:1px solid rgba(255,255,255,.06);
+    }
+
+    .footer{ margin-top:12px; display:flex; align-items:center; justify-content: space-between; gap:10px; }
+    .btn{
+      cursor:pointer; user-select:none; border:none; border-radius: 12px; padding:10px 12px;
+      background:#22325e; color:#e9f0ff; font-weight:600; letter-spacing:.2px; transition:.2s transform,.2s opacity;
+    }
+    .btn:hover{ transform: translateY(-1px); opacity:.95; }
+
+    dialog{
+      width:min(920px, 92vw); border:none; border-radius: 20px; padding:0; overflow:hidden;
+      background: linear-gradient(180deg, #121a30, #0f162b); color:var(--text); box-shadow: 0 40px 90px rgba(0,0,0,.6);
+    }
+    .modal-head{ display:flex; align-items:center; justify-content: space-between; padding:16px 18px; border-bottom:1px solid rgba(255,255,255,.06); background: rgba(255,255,255,.02); }
+    .modal-title{ font-size:18px; font-weight:700; }
+    .close{ all:unset; cursor:pointer; background:#2a3a6a; padding:8px 10px; border-radius:12px; font-weight:700; }
+    .modal-body{ display:grid; gap:18px; grid-template-columns: 330px 1fr; padding:18px; }
+
+    .modal-img{
+      width:100%;
+      aspect-ratio: 4/3; height:auto; object-fit: contain; object-position: center;
+      border-radius: 14px; border:1px solid rgba(255,255,255,.08); background:#0b1327;
+    }
+
+    .section{ background: #0f1730; border:1px solid rgba(255,255,255,.06); border-radius: 14px; padding:14px; }
+    .section h3{ margin:0 0 8px; font-size:14px; text-transform: uppercase; letter-spacing:.8px; color:#c8d6ff; }
+
+    /* === Stats en “píldora” (no a lo ancho) === */
+    .kv{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      font-size:14px;
+      color:#d3def8;
+    }
+    .kv .rowStat{
+      display:inline-flex;            /* <- no se estira a todo el ancho */
+      align-items:center;
+      gap:10px;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:10px;
+      padding:6px 10px;
+      align-self:flex-start;          /* <- se queda al inicio, como una pastilla */
+    }
+    .kv .rowStat span:first-child{
+      font-weight:700;
+      min-width:42px;                 /* PS/ATK/DEF alineados */
+      letter-spacing:.2px;
+    }
+    .kv .rowStat span:last-child{
+      font-variant-numeric: tabular-nums;
+      opacity:.95;
+    }
+
+    .muted{ color:#9fb0d3; font-size:13px; line-height:1.45; }
+
+    .type-Planta{ color:#469b46; } .type-Veneno{ color:#703670; }
+    .type-Psíquico, .type-Psiquico{ color:#c214c2; } .type-Fuego{ color:#e21d1d; }
+    .type-Agua{ color:#2f74c2; } .type-Eléctrico, .type-Electrico{ color:#f5c833; }
+    .type-Siniestro{ color:#3d3d3d; } .type-Acero{ color:#c7d2dd; }
+    .type-Roca{ color:#5e4323; } .type-Lucha{ color:#9e5700; }
+    .type-Hielo{ color:#a7e6eb; } .type-Tierra{ color:#d4ac66; }
+    .type-Volador{ color:#bacde9; } .type-Hada{ color:#ff7cda; }
+    .type-Dragón, .type-Dragon{ color:#380794; } .type-Normal{ color:#e6e6e6; }
+    .type-Bicho{ color:#405f37; } .type-Fantasma{ color:#1b142c; }
+
+    @media (max-width: 780px){
+      .bar{ grid-template-columns: 1fr; }
+      .modal-body{ grid-template-columns: 1fr; }
+    }
+  </style>
+
+  <script src="data.js"></script>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="bar">
+        <div class="title">📘 Pokedéx (plantilla ligera)</div>
+        <input id="q" type="search" placeholder="Buscar por nombre, # o definición" autocomplete="off" />
+        <select id="typeFilter">
+          <option value="">Todos los tipos</option>
+          <option>Planta</option><option>Veneno</option><option>Fuego</option><option>Agua</option>
+          <option>Eléctrico</option><option>Psíquico</option><option>Siniestro</option><option>Roca</option>
+          <option>Lucha</option><option>Hielo</option><option>Tierra</option><option>Volador</option>
+          <option>Hada</option><option>Dragón</option><option>Normal</option><option>Bicho</option>
+          <option>Fantasma</option><option>Acero</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <dialog id="dlg">
+    <div class="modal-head">
+      <div class="modal-title" id="dlgTitle">Detalle</div>
+      <button class="close" id="dlgClose">Cerrar</button>
+    </div>
+    <div class="modal-body">
+      <img id="dlgImg" class="modal-img" alt="Imagen Pokémon" loading="lazy" />
+      <div>
+        <div class="section">
+          <h3>Definición</h3>
+          <p id="dlgDesc" class="muted"></p>
+        </div>
+        <div class="section">
+          <h3>Draft Pokédex</h3>
+          <p id="dlgDraft" class="muted"></p>
+        </div>
+        <div class="section" id="secFacts" style="display:none;">
+          <h3>Curiosidades</h3>
+          <p id="dlgFacts" class="muted"></p>
+        </div>
+        <div class="section">
+          <h3>Stats</h3>
+          <div class="kv" id="dlgStats"></div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    const $ = s => document.querySelector(s);
+    const grid = $('#grid'), q = $('#q'), typeFilter = $('#typeFilter'),
+          dlg = $('#dlg'), dlgTitle = $('#dlgTitle'), dlgDesc = $('#dlgDesc'),
+          dlgDraft = $('#dlgDraft'), dlgImg = $('#dlgImg'), dlgStats = $('#dlgStats'),
+          dlgClose = $('#dlgClose'), secFacts = $('#secFacts'), dlgFacts = $('#dlgFacts');
+
+    function typeClass(t){
+      return 'type-' + String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'');
+    }
+
+    function render(list){
+      grid.innerHTML = '';
+      list.forEach(p=>{
+        const card = document.createElement('article');
+        card.className='card';
+        const types = Array.isArray(p.types)?p.types:[];
+        const chips = types.map(t=>`<span class="chip ${typeClass(t)}">${t}</span>`).join('');
+        const imgSrc = p.image || `Sprite/${String(p.name).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]/g,'')}.png`;
+        card.innerHTML=`
+          <img class="thumb" src="${imgSrc}" alt="${p.name}" loading="lazy" />
+          <div class="body">
+            <div class="row">
+              <div class="name">#${String(p.id).padStart(3,'0')} ${p.name}</div>
+              <div class="dex">${types.join(' / ')}</div>
+            </div>
+            <div class="chips">${chips}</div>
+            <div class="footer">
+              <button class="btn" data-id="${p.id}">Ver detalle</button>
+              <span class="muted">${(p.definition||'').slice(0,48)}${(p.definition||'').length>48?'…':''}</span>
+            </div>
+          </div>`;
+        card.querySelector('.thumb').onerror=()=>{card.querySelector('.thumb').src='assets/img/_placeholder.png';};
+        grid.append(card);
+      });
+      grid.querySelectorAll('.btn').forEach(b=>b.onclick=e=>openDetail(+e.target.dataset.id));
+    }
+
+    function openDetail(id){
+      const p=(Array.isArray(POKEMON)?POKEMON:[]).find(x=>x.id===id);
+      if(!p)return;
+      dlgTitle.textContent=`#${String(p.id).padStart(3,'0')} ${p.name}`;
+      dlgDesc.textContent=p.definition||'—';
+      dlgDraft.textContent=p.dex_draft||'—';
+      const facts=(p.curiosidades??p.Curiosidades??'').trim();
+      if(facts && facts.toLowerCase()!=='nan'){secFacts.style.display='block';dlgFacts.textContent=facts;}
+      else{secFacts.style.display='none';dlgFacts.textContent='';}
+      const imgSrc=p.image||`Sprite/${String(p.name).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]/g,'')}.png`;
+      dlgImg.src=imgSrc;dlgImg.onerror=()=>dlgImg.src='assets/img/_placeholder.png';
+
+      dlgStats.innerHTML='';
+      const labels={hp:'PS',atk:'ATK',def:'DEF',spa:'SPA',spd:'SPD',spe:'VEL'};
+      const order=['hp','atk','def','spa','spd','spe'];
+      const getStat=k=>(p.stats&&p.stats[k]!=null)?Number(p.stats[k])||0:(p[k]!=null?Number(p[k])||0:0);
+      order.forEach(k=>{
+        const row=document.createElement('div');
+        row.className='rowStat';
+        const name=document.createElement('span');
+        name.textContent=labels[k];
+        const val=document.createElement('span');
+        val.textContent=String(getStat(k));
+        row.append(name,val);
+        dlgStats.append(row);
+      });
+
+      dlg.showModal();
+    }
+
+    dlgClose.onclick=()=>dlg.close();
+
+    function applyFilters(){
+      const text=q.value.trim().toLowerCase(), type=typeFilter.value;
+      const out=(Array.isArray(POKEMON)?POKEMON:[]).filter(p=>{
+        const inName=String(p.name||'').toLowerCase().includes(text);
+        const inId=String(p.id).padStart(3,'0').includes(text);
+        const inDef=String(p.definition||'').toLowerCase().includes(text);
+        const textMatch=!text||inName||inId||inDef;
+        const types=Array.isArray(p.types)?p.types:[];
+        const typeMatch=!type||types.includes(type);
+        return textMatch&&typeMatch;
+      });
+      render(out);
+    }
+
+    q.oninput=applyFilters;
+    typeFilter.onchange=applyFilters;
+
+    if(!window.POKEMON) console.error('No se ha cargado data.js o POKEMON no está definido.');
+    render(Array.isArray(POKEMON)?POKEMON:[]);
+  </script>
+</body>
+</html>
