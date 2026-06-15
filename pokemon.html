@@ -78,12 +78,19 @@
       const typesBox = document.getElementById("pokemonTypes");
       const types = Array.isArray(pokemon.types) ? pokemon.types : [];
 
-      types.forEach(type => {
-        const span = document.createElement("span");
-        span.className = "chip";
-        span.textContent = type;
-        typesBox.appendChild(span);
-      });
+function typeClass(t){
+  return 'type-' + String(t || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .replace(/\s+/g,'');
+}
+
+types.forEach(type => {
+  const span = document.createElement("span");
+  span.className = `chip ${typeClass(type)}`;
+  span.textContent = type;
+  typesBox.appendChild(span);
+});
 
       const facts = (pokemon.curiosidades || "").trim();
       if (facts && facts.toLowerCase() !== "nan") {
