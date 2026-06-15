@@ -257,3 +257,34 @@ main {
 .dex-list-card .btn {
   display: none;
 }
+.dex-list-card {
+  grid-template-columns: 110px 1fr !important;
+  min-height: 105px;
+}
+
+.dex-thumb-box {
+  padding: 8px;
+}
+
+.thumb,
+.dex-thumb {
+  width: 76px;
+  height: 76px;
+}
+
+.body,
+.dex-list-body {
+  padding: 12px 16px;
+}
+
+.name {
+  font-size: 20px;
+}
+
+.footer {
+  margin-top: 8px;
+}
+
+.row > .dex:last-child {
+  display: none;
+}
