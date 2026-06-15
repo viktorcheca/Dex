@@ -374,7 +374,7 @@ main {
   border-radius: 999px;
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 760px) {
   .pokemon-sheet {
     grid-template-columns: 1fr;
   }
