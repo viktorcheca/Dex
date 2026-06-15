@@ -214,7 +214,7 @@ main {
 .type-Dragon { color:#8d6bff; }
 .type-Normal { color:#e6e6e6; }
 .type-Bicho { color:#89b96f; }
-.type-Fantasma { color:#8b73c9; }
+.type-Fantasma { color:#8b73c8; }
 
 @media (max-width: 780px) {
   .bar {
