@@ -11,39 +11,50 @@
   <main class="pokemon-page">
     <a class="back" href="index.html">← Volver a la Dex</a>
 
-    <section class="pokemon-hero">
-      <div class="pokemon-image-box">
-        <img id="pokemonImg" alt="Imagen Pokémon">
-      </div>
-
-      <div class="pokemon-info">
-        <div id="pokemonNumber" class="pokemon-number"></div>
+    <section class="pokemon-sheet">
+      <div class="pokemon-left">
+        <div class="pokemon-number" id="pokemonNumber"></div>
         <h1 id="pokemonName"></h1>
         <div id="pokemonTypes" class="chips"></div>
         <h2 id="pokemonDefinition"></h2>
+
+        <section class="panel">
+          <h3>Biología</h3>
+          <p id="pokemonDex"></p>
+        </section>
+
+        <section class="panel">
+          <h3>Stats base</h3>
+          <div id="pokemonStats" class="stats-list"></div>
+        </section>
+
+        <section class="panel" id="factsPanel">
+          <h3>Curiosidades</h3>
+          <p id="pokemonFacts"></p>
+        </section>
+
+        <section class="panel muted-panel">
+          <h3>Línea evolutiva</h3>
+          <p>Próximamente</p>
+        </section>
+
+        <section class="panel muted-panel">
+          <h3>Área / Hábitat</h3>
+          <p>Próximamente</p>
+        </section>
       </div>
-    </section>
 
-    <section class="panel">
-      <h3>Descripción Pokédex</h3>
-      <p id="pokemonDex"></p>
-    </section>
-
-    <section class="panel" id="factsPanel">
-      <h3>Curiosidades</h3>
-      <p id="pokemonFacts"></p>
-    </section>
-
-    <section class="panel">
-      <h3>Stats base</h3>
-      <div id="pokemonStats" class="stats-list"></div>
+      <aside class="pokemon-right">
+        <div class="pokemon-image-box">
+          <img id="pokemonImg" alt="Imagen Pokémon">
+        </div>
+      </aside>
     </section>
   </main>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const id = Number(params.get("id"));
-
     const pokemon = POKEMON.find(p => p.id === id);
 
     if (!pokemon) {
@@ -65,7 +76,9 @@
       img.onerror = () => img.src = "assets/img/_placeholder.png";
 
       const typesBox = document.getElementById("pokemonTypes");
-      pokemon.types.forEach(type => {
+      const types = Array.isArray(pokemon.types) ? pokemon.types : [];
+
+      types.forEach(type => {
         const span = document.createElement("span");
         span.className = "chip";
         span.textContent = type;
@@ -84,13 +97,13 @@
         hp: "PS",
         atk: "Ataque",
         def: "Defensa",
-        spa: "Ataque Esp.",
-        spd: "Defensa Esp.",
+        spa: "At. Esp.",
+        spd: "Def. Esp.",
         spe: "Velocidad"
       };
 
       Object.entries(labels).forEach(([key, label]) => {
-        const value = pokemon.stats?.[key] ?? 0;
+        const value = Number(pokemon.stats?.[key] ?? 0);
         const width = Math.min((value / 150) * 100, 100);
 
         statsBox.innerHTML += `
