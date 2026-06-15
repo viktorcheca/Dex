@@ -241,3 +241,154 @@ main {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+.pokemon-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 28px 24px 90px;
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 22px;
+  color: #cfe0ff;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.pokemon-sheet {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 520px;
+  gap: 28px;
+  align-items: start;
+}
+
+.pokemon-left {
+  min-width: 0;
+}
+
+.pokemon-number {
+  color: var(--muted);
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  font-size: 18px;
+}
+
+.pokemon-left h1 {
+  margin: 4px 0 8px;
+  font-size: clamp(46px, 6vw, 82px);
+  line-height: .9;
+}
+
+.pokemon-left h2 {
+  margin: 18px 0 22px;
+  color: #c8d6ff;
+  font-weight: 500;
+}
+
+.pokemon-right {
+  position: sticky;
+  top: 105px;
+}
+
+.pokemon-image-box {
+  min-height: 620px;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(255,255,255,.12), transparent 40%),
+    rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 28px;
+  padding: 26px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.42);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pokemon-image-box img {
+  width: 100%;
+  max-height: 560px;
+  object-fit: contain;
+  display: block;
+}
+
+.panel {
+  background: rgba(15,23,48,.82);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 18px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+
+.panel h3 {
+  margin: 0 0 10px;
+  color: var(--accent, #ffcc00);
+  text-transform: uppercase;
+  letter-spacing: .9px;
+  font-size: 14px;
+}
+
+.panel p {
+  margin: 0;
+  color: #d3def8;
+  line-height: 1.68;
+  white-space: pre-line;
+}
+
+.muted-panel {
+  opacity: .65;
+}
+
+.stats-list {
+  display: grid;
+  gap: 11px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 95px 42px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.stat-name {
+  font-weight: 800;
+  color: #dfe8ff;
+}
+
+.stat-value {
+  text-align: right;
+  color: #cfe0ff;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-bar {
+  height: 12px;
+  background: rgba(255,255,255,.09);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.stat-fill {
+  height: 100%;
+  background: #ffcc00;
+  border-radius: 999px;
+}
+
+@media (max-width: 1000px) {
+  .pokemon-sheet {
+    grid-template-columns: 1fr;
+  }
+
+  .pokemon-right {
+    position: static;
+    order: -1;
+  }
+
+  .pokemon-image-box {
+    min-height: 420px;
+  }
+
+  .pokemon-image-box img {
+    max-height: 380px;
+  }
+}
