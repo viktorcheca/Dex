@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css">
   <title>Aionia Dex</title>
-   <script src="data.js"></script>
+  <script src="data.js"></script>
 </head>
 <body>
   <header>
@@ -29,124 +29,101 @@
     <div class="grid" id="grid"></div>
   </main>
 
-  <dialog id="dlg">
-    <div class="modal-head">
-      <div class="modal-title" id="dlgTitle">Detalle</div>
-      <button class="close" id="dlgClose">Cerrar</button>
-    </div>
-    <div class="modal-body">
-      <img id="dlgImg" class="modal-img" alt="Imagen Pokémon" loading="lazy" />
-      <div>
-        <div class="section">
-          <h3>Definición</h3>
-          <p id="dlgDesc" class="muted"></p>
-        </div>
-        <div class="section">
-          <h3>Draft Pokédex</h3>
-          <p id="dlgDraft" class="muted"></p>
-        </div>
-        <div class="section" id="secFacts" style="display:none;">
-          <h3>Curiosidades</h3>
-          <p id="dlgFacts" class="muted"></p>
-        </div>
-        <div class="section">
-          <h3>Stats</h3>
-          <div class="kv" id="dlgStats"></div>
-        </div>
-      </div>
-    </div>
-  </dialog>
-
   <script>
     const $ = s => document.querySelector(s);
-    const grid = $('#grid'), q = $('#q'), typeFilter = $('#typeFilter'),
-          dlg = $('#dlg'), dlgTitle = $('#dlgTitle'), dlgDesc = $('#dlgDesc'),
-          dlgDraft = $('#dlgDraft'), dlgImg = $('#dlgImg'), dlgStats = $('#dlgStats'),
-          dlgClose = $('#dlgClose'), secFacts = $('#secFacts'), dlgFacts = $('#dlgFacts');
+    const grid = $('#grid');
+    const q = $('#q');
+    const typeFilter = $('#typeFilter');
 
     function typeClass(t){
-      return 'type-' + String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'');
+      return 'type-' + String(t || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g,'')
+        .replace(/\s+/g,'');
+    }
+
+    function imageFallbackName(name){
+      return String(name || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g,'')
+        .replace(/[^a-zA-Z0-9]/g,'');
     }
 
     function render(list){
       grid.innerHTML = '';
-      list.forEach(p=>{
-        const card = document.createElement('article');
-        card.className='card';
-        const types = Array.isArray(p.types)?p.types:[];
-        const chips = types.map(t=>`<span class="chip ${typeClass(t)}">${t}</span>`).join('');
-        const imgSrc = p.image || `Sprite/${String(p.name).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]/g,'')}.png`;
-        card.innerHTML=`
-          <img class="thumb" src="${imgSrc}" alt="${p.name}" loading="lazy" />
-          <div class="body">
+
+      list.forEach(p => {
+        const card = document.createElement('a');
+        card.className = 'card dex-list-card';
+        card.href = `pokemon.html?id=${p.id}`;
+
+        const types = Array.isArray(p.types) ? p.types : [];
+        const chips = types
+          .map(t => `<span class="chip ${typeClass(t)}">${t}</span>`)
+          .join('');
+
+        const imgSrc = p.image || `Sprite/${imageFallbackName(p.name)}.png`;
+        const number = String(p.id).padStart(3,'0');
+        const definition = p.definition || '';
+
+        card.innerHTML = `
+          <div class="dex-thumb-box">
+            <img class="thumb dex-thumb" src="${imgSrc}" alt="${p.name}" loading="lazy" />
+          </div>
+
+          <div class="body dex-list-body">
             <div class="row">
-              <div class="name">#${String(p.id).padStart(3,'0')} ${p.name}</div>
+              <div>
+                <div class="dex">#${number}</div>
+                <div class="name">${p.name}</div>
+              </div>
               <div class="dex">${types.join(' / ')}</div>
             </div>
+
             <div class="chips">${chips}</div>
+
             <div class="footer">
-              <button class="btn" data-id="${p.id}">Ver detalle</button>
-              <span class="muted">${(p.definition||'').slice(0,48)}${(p.definition||'').length>48?'…':''}</span>
+              <span class="muted">${definition}</span>
+              <span class="btn">Ver ficha</span>
             </div>
-          </div>`;
-        card.querySelector('.thumb').onerror=()=>{card.querySelector('.thumb').src='assets/img/_placeholder.png';};
+          </div>
+        `;
+
+        card.querySelector('.thumb').onerror = () => {
+          card.querySelector('.thumb').src = 'assets/img/_placeholder.png';
+        };
+
         grid.append(card);
       });
-      grid.querySelectorAll('.btn').forEach(b=>b.onclick=e=>openDetail(+e.target.dataset.id));
     }
-
-    function openDetail(id){
-      const p=(Array.isArray(POKEMON)?POKEMON:[]).find(x=>x.id===id);
-      if(!p)return;
-      dlgTitle.textContent=`#${String(p.id).padStart(3,'0')} ${p.name}`;
-      dlgDesc.textContent=p.definition||'—';
-      dlgDraft.textContent=p.dex_draft||'—';
-      const facts=(p.curiosidades??p.Curiosidades??'').trim();
-      if(facts && facts.toLowerCase()!=='nan'){secFacts.style.display='block';dlgFacts.textContent=facts;}
-      else{secFacts.style.display='none';dlgFacts.textContent='';}
-      const imgSrc=p.image||`Sprite/${String(p.name).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]/g,'')}.png`;
-      dlgImg.src=imgSrc;dlgImg.onerror=()=>dlgImg.src='assets/img/_placeholder.png';
-
-      dlgStats.innerHTML='';
-      const labels={hp:'PS',atk:'ATK',def:'DEF',spa:'SPA',spd:'SPD',spe:'VEL'};
-      const order=['hp','atk','def','spa','spd','spe'];
-      const getStat=k=>(p.stats&&p.stats[k]!=null)?Number(p.stats[k])||0:(p[k]!=null?Number(p[k])||0:0);
-      order.forEach(k=>{
-        const row=document.createElement('div');
-        row.className='rowStat';
-        const name=document.createElement('span');
-        name.textContent=labels[k];
-        const val=document.createElement('span');
-        val.textContent=String(getStat(k));
-        row.append(name,val);
-        dlgStats.append(row);
-      });
-
-      dlg.showModal();
-    }
-
-    dlgClose.onclick=()=>dlg.close();
 
     function applyFilters(){
-      const text=q.value.trim().toLowerCase(), type=typeFilter.value;
-      const out=(Array.isArray(POKEMON)?POKEMON:[]).filter(p=>{
-        const inName=String(p.name||'').toLowerCase().includes(text);
-        const inId=String(p.id).padStart(3,'0').includes(text);
-        const inDef=String(p.definition||'').toLowerCase().includes(text);
-        const textMatch=!text||inName||inId||inDef;
-        const types=Array.isArray(p.types)?p.types:[];
-        const typeMatch=!type||types.includes(type);
-        return textMatch&&typeMatch;
+      const text = q.value.trim().toLowerCase();
+      const type = typeFilter.value;
+
+      const out = (Array.isArray(POKEMON) ? POKEMON : []).filter(p => {
+        const inName = String(p.name || '').toLowerCase().includes(text);
+        const inId = String(p.id).padStart(3,'0').includes(text);
+        const inDef = String(p.definition || '').toLowerCase().includes(text);
+        const textMatch = !text || inName || inId || inDef;
+
+        const types = Array.isArray(p.types) ? p.types : [];
+        const typeMatch = !type || types.includes(type);
+
+        return textMatch && typeMatch;
       });
+
       render(out);
     }
 
-    q.oninput=applyFilters;
-    typeFilter.onchange=applyFilters;
+    q.oninput = applyFilters;
+    typeFilter.onchange = applyFilters;
 
-    if(!window.POKEMON) console.error('No se ha cargado data.js o POKEMON no está definido.');
-    render(Array.isArray(POKEMON)?POKEMON:[]);
+    if (!window.POKEMON) {
+      console.error('No se ha cargado data.js o POKEMON no está definido.');
+    }
+
+    render(Array.isArray(POKEMON) ? POKEMON : []);
   </script>
 </body>
 </html>
-
