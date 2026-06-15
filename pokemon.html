@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ficha Pokémon – Aionia Dex</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="data.js"></script>
+</head>
+<body>
+  <main class="pokemon-page">
+    <a class="back" href="index.html">← Volver a la Dex</a>
+
+    <section class="pokemon-hero">
+      <div class="pokemon-image-box">
+        <img id="pokemonImg" alt="Imagen Pokémon">
+      </div>
+
+      <div class="pokemon-info">
+        <div id="pokemonNumber" class="pokemon-number"></div>
+        <h1 id="pokemonName"></h1>
+        <div id="pokemonTypes" class="chips"></div>
+        <h2 id="pokemonDefinition"></h2>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>Descripción Pokédex</h3>
+      <p id="pokemonDex"></p>
+    </section>
+
+    <section class="panel" id="factsPanel">
+      <h3>Curiosidades</h3>
+      <p id="pokemonFacts"></p>
+    </section>
+
+    <section class="panel">
+      <h3>Stats base</h3>
+      <div id="pokemonStats" class="stats-list"></div>
+    </section>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = Number(params.get("id"));
+
+    const pokemon = POKEMON.find(p => p.id === id);
+
+    if (!pokemon) {
+      document.body.innerHTML = `
+        <main class="pokemon-page">
+          <a class="back" href="index.html">← Volver a la Dex</a>
+          <h1>Pokémon no encontrado</h1>
+        </main>`;
+    } else {
+      document.title = `#${String(pokemon.id).padStart(3, "0")} ${pokemon.name} – Aionia Dex`;
+
+      document.getElementById("pokemonNumber").textContent = `#${String(pokemon.id).padStart(3, "0")}`;
+      document.getElementById("pokemonName").textContent = pokemon.name;
+      document.getElementById("pokemonDefinition").textContent = pokemon.definition || "";
+      document.getElementById("pokemonDex").textContent = pokemon.dex_draft || "—";
+
+      const img = document.getElementById("pokemonImg");
+      img.src = pokemon.image;
+      img.onerror = () => img.src = "assets/img/_placeholder.png";
+
+      const typesBox = document.getElementById("pokemonTypes");
+      pokemon.types.forEach(type => {
+        const span = document.createElement("span");
+        span.className = "chip";
+        span.textContent = type;
+        typesBox.appendChild(span);
+      });
+
+      const facts = (pokemon.curiosidades || "").trim();
+      if (facts && facts.toLowerCase() !== "nan") {
+        document.getElementById("pokemonFacts").textContent = facts;
+      } else {
+        document.getElementById("factsPanel").style.display = "none";
+      }
+
+      const statsBox = document.getElementById("pokemonStats");
+      const labels = {
+        hp: "PS",
+        atk: "Ataque",
+        def: "Defensa",
+        spa: "Ataque Esp.",
+        spd: "Defensa Esp.",
+        spe: "Velocidad"
+      };
+
+      Object.entries(labels).forEach(([key, label]) => {
+        const value = pokemon.stats?.[key] ?? 0;
+        const width = Math.min((value / 150) * 100, 100);
+
+        statsBox.innerHTML += `
+          <div class="stat-row">
+            <span class="stat-name">${label}</span>
+            <span class="stat-value">${value}</span>
+            <div class="stat-bar">
+              <div class="stat-fill" style="width:${width}%"></div>
+            </div>
+          </div>`;
+      });
+    }
+  </script>
+</body>
+</html>
