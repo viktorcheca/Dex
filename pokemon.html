@@ -33,9 +33,9 @@
           <p id="pokemonFacts"></p>
         </section>
 
-        <section class="panel muted-panel">
+        <section class="panel" id="evolutionPanel">
           <h3>Línea evolutiva</h3>
-          <p>Próximamente</p>
+          <div id="pokemonEvolutionLine" class="evolution-line"></div>
         </section>
 
         <section class="panel muted-panel">
@@ -56,6 +56,13 @@
     const params = new URLSearchParams(window.location.search);
     const id = Number(params.get("id"));
     const pokemon = POKEMON.find(p => p.id === id);
+
+    function typeClass(t) {
+      return 'type-' + String(t || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, '');
+    }
 
     if (!pokemon) {
       document.body.innerHTML = `
@@ -78,21 +85,15 @@
       const typesBox = document.getElementById("pokemonTypes");
       const types = Array.isArray(pokemon.types) ? pokemon.types : [];
 
-function typeClass(t){
-  return 'type-' + String(t || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g,'')
-    .replace(/\s+/g,'');
-}
-
-types.forEach(type => {
-  const span = document.createElement("span");
-  span.className = `chip ${typeClass(type)}`;
-  span.textContent = type;
-  typesBox.appendChild(span);
-});
+      types.forEach(type => {
+        const span = document.createElement("span");
+        span.className = `chip ${typeClass(type)}`;
+        span.textContent = type;
+        typesBox.appendChild(span);
+      });
 
       const facts = (pokemon.curiosidades || "").trim();
+
       if (facts && facts.toLowerCase() !== "nan") {
         document.getElementById("pokemonFacts").textContent = facts;
       } else {
@@ -100,6 +101,7 @@ types.forEach(type => {
       }
 
       const statsBox = document.getElementById("pokemonStats");
+
       const labels = {
         hp: "PS",
         atk: "Ataque",
@@ -122,6 +124,34 @@ types.forEach(type => {
             </div>
           </div>`;
       });
+
+      const evoBox = document.getElementById("pokemonEvolutionLine");
+      const evoPanel = document.getElementById("evolutionPanel");
+
+      const evoIds = Array.isArray(pokemon.evolutionLine) ? pokemon.evolutionLine : [];
+
+      const evoPokemon = evoIds
+        .map(evoId => POKEMON.find(p => p.id === evoId))
+        .filter(Boolean);
+
+      if (evoPokemon.length) {
+        evoBox.innerHTML = evoPokemon.map((p, index) => {
+          const arrow = index < evoPokemon.length - 1
+            ? `<span class="evo-arrow">→</span>`
+            : "";
+
+          return `
+            <a class="evo-card" href="pokemon.html?id=${p.id}">
+              <img src="${p.image}" alt="${p.name}" onerror="this.src='assets/img/_placeholder.png'">
+              <span>#${String(p.id).padStart(3, "0")}</span>
+              <strong>${p.name}</strong>
+            </a>
+            ${arrow}
+          `;
+        }).join("");
+      } else {
+        evoPanel.style.display = "none";
+      }
     }
   </script>
 </body>
