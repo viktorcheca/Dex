@@ -46,7 +46,14 @@
 
       <aside class="pokemon-right">
         <div class="pokemon-image-box">
+          <button class="form-arrow form-prev" id="prevForm" type="button" aria-label="Forma anterior">‹</button>
           <img id="pokemonImg" alt="Imagen Pokémon">
+          <button class="form-arrow form-next" id="nextForm" type="button" aria-label="Forma siguiente">›</button>
+        </div>
+
+        <div class="form-selector" id="formSelector">
+          <div class="form-label">Forma</div>
+          <div class="form-name" id="formName"></div>
         </div>
       </aside>
     </section>
@@ -64,6 +71,27 @@
         .replace(/\s+/g, '');
     }
 
+    function getPokemonForms(p) {
+      const forms = Array.isArray(p?.forms)
+        ? p.forms.filter(f => f && f.image)
+        : [];
+
+      if (forms.length) {
+        return forms;
+      }
+
+      return [
+        {
+          name: "Normal",
+          image: p?.image || "assets/img/_placeholder.png"
+        }
+      ];
+    }
+
+    function getDisplayImage(p) {
+      return getPokemonForms(p)[0]?.image || p?.image || "assets/img/_placeholder.png";
+    }
+
     if (!pokemon) {
       document.body.innerHTML = `
         <main class="pokemon-page">
@@ -79,8 +107,40 @@
       document.getElementById("pokemonDex").textContent = pokemon.dex_draft || "—";
 
       const img = document.getElementById("pokemonImg");
-      img.src = pokemon.image;
+      const formSelector = document.getElementById("formSelector");
+      const formName = document.getElementById("formName");
+      const prevForm = document.getElementById("prevForm");
+      const nextForm = document.getElementById("nextForm");
+
+      const forms = getPokemonForms(pokemon);
+      let currentFormIndex = 0;
+
+      function renderForm() {
+        const form = forms[currentFormIndex];
+
+        img.src = form.image;
+        img.alt = `${pokemon.name} - ${form.name}`;
+        formName.textContent = form.name || "Normal";
+
+        const hasMultipleForms = forms.length > 1;
+        formSelector.style.display = hasMultipleForms ? "" : "none";
+        prevForm.style.display = hasMultipleForms ? "" : "none";
+        nextForm.style.display = hasMultipleForms ? "" : "none";
+      }
+
       img.onerror = () => img.src = "assets/img/_placeholder.png";
+
+      prevForm.addEventListener("click", () => {
+        currentFormIndex = (currentFormIndex - 1 + forms.length) % forms.length;
+        renderForm();
+      });
+
+      nextForm.addEventListener("click", () => {
+        currentFormIndex = (currentFormIndex + 1) % forms.length;
+        renderForm();
+      });
+
+      renderForm();
 
       const typesBox = document.getElementById("pokemonTypes");
       const types = Array.isArray(pokemon.types) ? pokemon.types : [];
@@ -142,7 +202,7 @@
 
           return `
             <a class="evo-card" href="pokemon.html?id=${p.id}">
-              <img src="${p.image}" alt="${p.name}" onerror="this.src='assets/img/_placeholder.png'">
+              <img src="${getDisplayImage(p)}" alt="${p.name}" onerror="this.src='assets/img/_placeholder.png'">
               <span>#${String(p.id).padStart(3, "0")}</span>
               <strong>${p.name}</strong>
             </a>
