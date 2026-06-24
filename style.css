@@ -537,3 +537,84 @@ main {
   color: #172033;
   opacity: 0.45;
 }
+
+/* ================================
+   Selector de formas Pokémon
+   ================================ */
+.pokemon-image-box {
+  position: relative;
+  overflow: hidden;
+}
+
+.form-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+
+  width: 38px;
+  height: 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 12px;
+  background: rgba(10,15,32,.72);
+  color: #e8ecf1;
+  box-shadow: 0 8px 22px rgba(0,0,0,.28);
+
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease, border-color .15s ease;
+}
+
+.form-btn:hover {
+  background: rgba(20,30,54,.94);
+  border-color: rgba(255,255,255,.32);
+}
+
+.form-btn:active {
+  transform: translateY(-50%) scale(.96);
+}
+
+.form-btn.prev {
+  left: 16px;
+}
+
+.form-btn.next {
+  right: 16px;
+}
+
+.form-name {
+  margin-top: 14px;
+  text-align: center;
+  color: #cfe0ff;
+  font-weight: 800;
+  letter-spacing: .3px;
+}
+
+.form-name::before {
+  content: "Forma ";
+  color: var(--muted);
+  font-weight: 600;
+}
+
+@media (max-width: 760px) {
+  .form-btn {
+    width: 34px;
+    height: 42px;
+    font-size: 22px;
+  }
+
+  .form-btn.prev {
+    left: 10px;
+  }
+
+  .form-btn.next {
+    right: 10px;
+  }
+}
