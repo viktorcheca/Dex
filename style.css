@@ -618,3 +618,77 @@ main {
     right: 10px;
   }
 }
+.pokemon-image-box {
+  position: relative;
+}
+
+.form-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(10, 16, 32, .86);
+  color: #e8ecf1;
+
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(0,0,0,.35);
+  transition: transform .15s ease, background .15s ease, color .15s ease;
+}
+
+.form-arrow:hover {
+  transform: translateY(-50%) scale(1.08);
+  background: #ffcc00;
+  color: #07101d;
+}
+
+.form-prev {
+  left: 18px;
+}
+
+.form-next {
+  right: 18px;
+}
+
+.form-selector {
+  margin-top: 14px;
+  text-align: center;
+}
+
+.form-label {
+  display: none;
+}
+
+.form-name {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 7px 16px;
+  border-radius: 999px;
+
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.10);
+
+  color: #cfe0ff;
+  font-weight: 800;
+}
+
+.form-name::before {
+  content: "Forma ";
+  color: var(--muted);
+  font-weight: 600;
+}
