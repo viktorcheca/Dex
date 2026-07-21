@@ -288,6 +288,39 @@
       } else {
         evoPanel.style.display = "none";
       }
+
+      document.addEventListener("keydown", event => {
+        const activeTag = document.activeElement?.tagName;
+
+        if (activeTag === "INPUT" || activeTag === "TEXTAREA" || document.activeElement?.isContentEditable) {
+          return;
+        }
+
+        if (event.key === "Escape") {
+          event.preventDefault();
+          window.location.href = "index.html";
+          return;
+        }
+
+        if (event.key === "s" || event.key === "S") {
+          if (shinyToggle.style.display !== "none") {
+            event.preventDefault();
+            shinyToggle.click();
+          }
+          return;
+        }
+
+        if (event.key === "ArrowLeft" && forms.length > 1) {
+          event.preventDefault();
+          prevForm.click();
+          return;
+        }
+
+        if (event.key === "ArrowRight" && forms.length > 1) {
+          event.preventDefault();
+          nextForm.click();
+        }
+      });
     }
   </script>
 </body>
