@@ -46,6 +46,14 @@
 
       <aside class="pokemon-right">
         <div class="pokemon-image-box">
+          <button
+            id="shinyToggle"
+            class="shiny-toggle"
+            type="button"
+            aria-label="Mostrar versión shiny"
+            title="Mostrar versión shiny"
+            style="display:none;"
+          >✦</button>
           <button class="form-arrow form-prev" id="prevForm" type="button" aria-label="Forma anterior">‹</button>
           <img id="pokemonImg" alt="Imagen Pokémon">
           <button class="form-arrow form-next" id="nextForm" type="button" aria-label="Forma siguiente">›</button>
@@ -92,6 +100,26 @@
       return getPokemonForms(p)[0]?.image || p?.image || "assets/img/_placeholder.png";
     }
 
+    function getShinyPath(imagePath) {
+      const dotIndex = imagePath.lastIndexOf(".");
+
+      if (dotIndex === -1) {
+        return `${imagePath}_shiny`;
+      }
+
+      return `${imagePath.slice(0, dotIndex)}_shiny${imagePath.slice(dotIndex)}`;
+    }
+
+    function imageExists(src) {
+      return new Promise(resolve => {
+        const testImage = new Image();
+
+        testImage.onload = () => resolve(true);
+        testImage.onerror = () => resolve(false);
+        testImage.src = src;
+      });
+    }
+
     if (!pokemon) {
       document.body.innerHTML = `
         <main class="pokemon-page">
@@ -111,24 +139,72 @@
       const formName = document.getElementById("formName");
       const prevForm = document.getElementById("prevForm");
       const nextForm = document.getElementById("nextForm");
+      const shinyToggle = document.getElementById("shinyToggle");
 
       const forms = getPokemonForms(pokemon);
+      const shinyAvailability = new Map();
       let currentFormIndex = 0;
+      let showingShiny = false;
 
-      function renderForm() {
+      async function renderForm() {
         const form = forms[currentFormIndex];
+        const normalImage = form.image || "assets/img/_placeholder.png";
+        const shinyImage = getShinyPath(normalImage);
 
-        img.src = form.image;
-        img.alt = `${pokemon.name} - ${form.name}`;
+        let hasShiny = shinyAvailability.get(shinyImage);
+
+        if (hasShiny === undefined) {
+          shinyToggle.style.display = "none";
+          hasShiny = await imageExists(shinyImage);
+          shinyAvailability.set(shinyImage, hasShiny);
+
+          if (form !== forms[currentFormIndex]) {
+            return;
+          }
+        }
+
+        if (!hasShiny) {
+          showingShiny = false;
+        }
+
+        img.src = showingShiny && hasShiny ? shinyImage : normalImage;
+        img.alt = `${pokemon.name} - ${form.name || "Normal"}${showingShiny ? " shiny" : ""}`;
         formName.textContent = form.name || "Normal";
 
         const hasMultipleForms = forms.length > 1;
         formSelector.style.display = hasMultipleForms ? "" : "none";
         prevForm.style.display = hasMultipleForms ? "" : "none";
         nextForm.style.display = hasMultipleForms ? "" : "none";
+
+        shinyToggle.style.display = hasShiny ? "" : "none";
+        shinyToggle.classList.toggle("active", showingShiny);
+        shinyToggle.setAttribute(
+          "aria-label",
+          showingShiny ? "Mostrar versión normal" : "Mostrar versión shiny"
+        );
+        shinyToggle.title = showingShiny
+          ? "Mostrar versión normal"
+          : "Mostrar versión shiny";
       }
 
-      img.onerror = () => img.src = "assets/img/_placeholder.png";
+      img.onerror = () => {
+        const form = forms[currentFormIndex];
+
+        if (showingShiny) {
+          showingShiny = false;
+          shinyAvailability.set(getShinyPath(form.image), false);
+          renderForm();
+          return;
+        }
+
+        img.onerror = null;
+        img.src = "assets/img/_placeholder.png";
+      };
+
+      shinyToggle.addEventListener("click", () => {
+        showingShiny = !showingShiny;
+        renderForm();
+      });
 
       prevForm.addEventListener("click", () => {
         currentFormIndex = (currentFormIndex - 1 + forms.length) % forms.length;
