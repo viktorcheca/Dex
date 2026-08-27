@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lugares · Aionia</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="data-lugares.js"></script>
+
+  <style>
+    body {
+      min-height: 100vh;
+    }
+
+    .places-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(10px);
+      background: rgba(7, 16, 29, .82);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+
+    .places-nav {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 15px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .places-brand {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: .13em;
+    }
+
+    .places-links {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .places-links a,
+    .places-links span {
+      padding: 8px 11px;
+      border-radius: 10px;
+      color: #cbd6ec;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .places-links a:hover,
+    .places-links .active {
+      background: rgba(255,255,255,.08);
+      color: #fff;
+    }
+
+    .places-links .disabled {
+      opacity: .38;
+    }
+
+    .places-page {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 46px 22px 90px;
+    }
+
+    .places-intro {
+      margin-bottom: 30px;
+    }
+
+    .places-kicker {
+      margin: 0 0 8px;
+      color: #75d1ad;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .places-intro h1 {
+      margin: 0;
+      font-size: clamp(42px, 7vw, 76px);
+      letter-spacing: -.04em;
+      line-height: .95;
+    }
+
+    .places-intro p {
+      max-width: 760px;
+      margin: 17px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .places-toolbar {
+      margin: 32px 0 24px;
+      display: grid;
+      grid-template-columns: minmax(220px, 1.5fr) minmax(160px, .7fr) minmax(160px, .7fr) auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .places-toolbar input,
+    .places-toolbar select {
+      width: 100%;
+    }
+
+    .wild-toggle {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: var(--card);
+      color: #dce6f8;
+      font-size: 13px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .wild-toggle input {
+      width: auto;
+      accent-color: #79d7b0;
+    }
+
+    .places-count {
+      margin: 0 0 16px;
+      color: #8795af;
+      font-size: 13px;
+    }
+
+    .places-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .place-card {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      color: inherit;
+      text-decoration: none;
+      background: linear-gradient(180deg, var(--card), var(--card-2));
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+    }
+
+    .place-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255,255,255,.18);
+      box-shadow: 0 19px 42px rgba(0,0,0,.48);
+    }
+
+    .place-image-box {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(255,255,255,.08), transparent 40%),
+        #0b1327;
+    }
+
+    .place-image-box img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .place-image-box.no-image img {
+      display: none;
+    }
+
+    .place-image-box.no-image::after {
+      content: "AIONIA";
+      color: rgba(255,255,255,.11);
+      font-size: clamp(24px, 5vw, 42px);
+      font-weight: 950;
+      letter-spacing: .18em;
+    }
+
+    .place-id {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 6px 9px;
+      border-radius: 9px;
+      background: rgba(4,10,20,.78);
+      border: 1px solid rgba(255,255,255,.10);
+      color: #eef5ff;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .04em;
+      backdrop-filter: blur(6px);
+    }
+
+    .place-body {
+      padding: 17px 17px 18px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .place-title {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.12;
+    }
+
+    .place-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 12px;
+    }
+
+    .place-tag {
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.055);
+      color: #c7d5eb;
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .place-description {
+      margin: 13px 0 0;
+      color: #9eabc3;
+      line-height: 1.48;
+      font-size: 13px;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+    }
+
+    .place-meta {
+      margin-top: auto;
+      padding-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .meta-chip {
+      padding: 5px 8px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.05);
+      color: #91a3c2;
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .meta-chip.wild {
+      color: #8ce6a2;
+      background: rgba(90,205,115,.10);
+      border: 1px solid rgba(90,205,115,.16);
+    }
+
+    .meta-chip.gym {
+      color: #ffd36e;
+      background: rgba(255,197,66,.09);
+      border: 1px solid rgba(255,197,66,.15);
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 60px 20px;
+      text-align: center;
+      border: 1px dashed rgba(255,255,255,.12);
+      border-radius: 20px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 1100px) {
+      .places-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .places-toolbar {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .wild-toggle {
+        min-height: 44px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .places-nav {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .places-page {
+        padding: 32px 16px 70px;
+      }
+
+      .places-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 13px;
+      }
+
+      .places-toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .place-body {
+        padding: 14px;
+      }
+
+      .place-title {
+        font-size: 18px;
+      }
+
+      .place-description {
+        display: none;
+      }
+    }
+
+    @media (max-width: 470px) {
+      .places-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .place-description {
+        display: -webkit-box;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="places-header">
+    <nav class="places-nav" aria-label="Navegación principal">
+      <a class="places-brand" href="index.html">AIONIA</a>
+
+      <div class="places-links">
+        <a href="index.html">Inicio</a>
+        <a href="dex.html">Pokédex</a>
+        <span class="disabled">Personajes</span>
+        <span class="active">Lugares</span>
+      </div>
+    </nav>
+  </header>
+
+  <main class="places-page">
+    <section class="places-intro">
+      <p class="places-kicker">Territorio de Aionia</p>
+      <h1>Lugares</h1>
+      <p>
+        Explora pueblos, rutas, bosques, islas, cuevas y otros enclaves de la región.
+        Cada lugar forma parte del recorrido, los ecosistemas y la historia de Aionia.
+      </p>
+    </section>
+
+    <section class="places-toolbar" aria-label="Filtros de lugares">
+      <input
+        id="placeSearch"
+        type="search"
+        placeholder="Buscar lugar..."
+        autocomplete="off"
+      />
+
+      <select id="typeFilter">
+        <option value="">Todos los tipos</option>
+      </select>
+
+      <select id="biomeFilter">
+        <option value="">Todos los biomas</option>
+      </select>
+
+      <label class="wild-toggle">
+        <input id="wildFilter" type="checkbox" />
+        Solo con Pokémon salvajes
+      </label>
+    </section>
+
+    <p class="places-count" id="placesCount"></p>
+
+    <section class="places-grid" id="placesGrid"></section>
+  </main>
+
+  <script>
+    const $ = selector => document.querySelector(selector);
+
+    const grid = $('#placesGrid');
+    const count = $('#placesCount');
+    const search = $('#placeSearch');
+    const typeFilter = $('#typeFilter');
+    const biomeFilter = $('#biomeFilter');
+    const wildFilter = $('#wildFilter');
+
+    const places = Array.isArray(window.LUGARES) ? window.LUGARES : [];
+
+    function uniqueValues(key) {
+      return [...new Set(
+        places
+          .map(place => String(place[key] || '').trim())
+          .filter(Boolean)
+      )].sort((a, b) => a.localeCompare(b, 'es'));
+    }
+
+    function fillSelect(select, values) {
+      values.forEach(value => {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      });
+    }
+
+    function serviceLabels(servicios = {}) {
+      const labels = [];
+
+      if (servicios.centroPokemon) labels.push('Centro Pokémon');
+      if (servicios.tienda) labels.push('Tienda');
+      if (servicios.gimnasio) labels.push('Gimnasio');
+      if (servicios.puerto) labels.push('Puerto');
+      if (servicios.investigacion) labels.push('Investigación');
+      if (servicios.observatorio) labels.push('Observatorio');
+      if (servicios.mercado) labels.push('Mercado');
+      if (servicios.guarderia) labels.push('Guardería');
+      if (servicios.hotel) labels.push('Hotel');
+
+      return labels;
+    }
+
+    function cardTemplate(place) {
+      const servicios = serviceLabels(place.servicios);
+      const hasGym = Boolean(place.servicios && place.servicios.gimnasio);
+
+      return `
+        <a class="place-card" href="lugar.html?id=${encodeURIComponent(place.id)}">
+          <div class="place-image-box">
+            <img
+              src="${place.imagen || ''}"
+              alt="${place.nombre || place.id}"
+              loading="lazy"
+            />
+            <span class="place-id">${place.id}</span>
+          </div>
+
+          <div class="place-body">
+            <h2 class="place-title">${place.nombre || place.id}</h2>
+
+            <div class="place-tags">
+              ${place.tipo ? `<span class="place-tag">${place.tipo}</span>` : ''}
+              ${place.bioma ? `<span class="place-tag">${place.bioma}</span>` : ''}
+            </div>
+
+            ${place.descripcion ? `<p class="place-description">${place.descripcion}</p>` : ''}
+
+            <div class="place-meta">
+              ${place.salvajes ? `<span class="meta-chip wild">Pokémon salvajes</span>` : ''}
+              ${hasGym ? `<span class="meta-chip gym">Gimnasio${place.medalla ? ` · Medalla ${place.medalla}` : ''}</span>` : ''}
+              ${!hasGym && place.medalla ? `<span class="meta-chip gym">Medalla ${place.medalla}</span>` : ''}
+              ${servicios
+                .filter(label => label !== 'Gimnasio')
+                .slice(0, 2)
+                .map(label => `<span class="meta-chip">${label}</span>`)
+                .join('')}
+            </div>
+          </div>
+        </a>
+      `;
+    }
+
+    function attachImageFallbacks() {
+      grid.querySelectorAll('.place-image-box img').forEach(img => {
+        img.addEventListener('error', () => {
+          img.parentElement.classList.add('no-image');
+        }, { once: true });
+
+        if (img.complete && img.naturalWidth === 0) {
+          img.parentElement.classList.add('no-image');
+        }
+      });
+    }
+
+    function applyFilters() {
+      const text = search.value.trim().toLocaleLowerCase('es');
+      const type = typeFilter.value;
+      const biome = biomeFilter.value;
+      const onlyWild = wildFilter.checked;
+
+      const filtered = places.filter(place => {
+        const searchable = [
+          place.id,
+          place.nombre,
+          place.descripcion,
+          place.tipo,
+          place.bioma
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLocaleLowerCase('es');
+
+        return (
+          (!text || searchable.includes(text)) &&
+          (!type || place.tipo === type) &&
+          (!biome || place.bioma === biome) &&
+          (!onlyWild || place.salvajes)
+        );
+      });
+
+      count.textContent =
+        `${filtered.length} ${filtered.length === 1 ? 'lugar' : 'lugares'} encontrados`;
+
+      if (!filtered.length) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            No hay lugares que coincidan con esos filtros.
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(cardTemplate).join('');
+      attachImageFallbacks();
+    }
+
+    fillSelect(typeFilter, uniqueValues('tipo'));
+    fillSelect(biomeFilter, uniqueValues('bioma'));
+
+    search.addEventListener('input', applyFilters);
+    typeFilter.addEventListener('change', applyFilters);
+    biomeFilter.addEventListener('change', applyFilters);
+    wildFilter.addEventListener('change', applyFilters);
+
+    if (!places.length) {
+      console.error('No se ha cargado data-lugares.js o LUGARES está vacío.');
+    }
+
+    applyFilters();
+  </script>
+</body>
+</html>
