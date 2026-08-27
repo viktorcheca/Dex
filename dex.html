@@ -1,1 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css">
+  <title>Aionia Dex</title>
+  <script src="data.js"></script>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="bar">
+        <div class="title">🌊 Aionia Dex</div>
+        <input id="q" type="search" placeholder="Buscar por nombre, # o definición" autocomplete="off" />
+        <select id="typeFilter">
+          <option value="">Todos los tipos</option>
+          <option>Planta</option><option>Veneno</option><option>Fuego</option><option>Agua</option>
+          <option>Eléctrico</option><option>Psíquico</option><option>Siniestro</option><option>Roca</option>
+          <option>Lucha</option><option>Hielo</option><option>Tierra</option><option>Volador</option>
+          <option>Hada</option><option>Dragón</option><option>Normal</option><option>Bicho</option>
+          <option>Fantasma</option><option>Acero</option>
+        </select>
+      </div>
+    </div>
+  </header>
 
+  <main>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <script>
+    const $ = s => document.querySelector(s);
+    const grid = $('#grid');
+    const q = $('#q');
+    const typeFilter = $('#typeFilter');
+
+    function typeClass(t){
+      return 'type-' + String(t || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g,'')
+        .replace(/\s+/g,'');
+    }
+
+    function imageFallbackName(name){
+      return String(name || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g,'')
+        .replace(/[^a-zA-Z0-9]/g,'');
+    }
+
+    function render(list){
+      grid.innerHTML = '';
+
+      list.forEach(p => {
+        const card = document.createElement('a');
+        card.className = 'card dex-list-card';
+        card.href = `pokemon.html?id=${p.id}`;
+
+        const types = Array.isArray(p.types) ? p.types : [];
+        const chips = types
+          .map(t => `<span class="chip ${typeClass(t)}">${t}</span>`)
+          .join('');
+
+        const imgSrc = p.image || `Sprite/${imageFallbackName(p.name)}.png`;
+        const number = String(p.id).padStart(3,'0');
+        const definition = p.definition || '';
+
+        card.innerHTML = `
+          <div class="dex-thumb-box">
+            <img class="thumb dex-thumb" src="${imgSrc}" alt="${p.name}" loading="lazy" />
+          </div>
+
+          <div class="body dex-list-body">
+            <div class="row">
+              <div>
+                <div class="dex">#${number}</div>
+                <div class="name">${p.name}</div>
+              </div>
+              <div class="dex">${types.join(' / ')}</div>
+            </div>
+
+            <div class="chips">${chips}</div>
+
+            <div class="footer">
+              <span class="muted">${definition}</span>
+              <span class="btn">Ver ficha</span>
+            </div>
+          </div>
+        `;
+
+        card.querySelector('.thumb').onerror = () => {
+          card.querySelector('.thumb').src = 'assets/img/_placeholder.png';
+        };
+
+        grid.append(card);
+      });
+    }
+
+    function applyFilters(){
+      const text = q.value.trim().toLowerCase();
+      const type = typeFilter.value;
+
+      const out = (Array.isArray(POKEMON) ? POKEMON : []).filter(p => {
+        const inName = String(p.name || '').toLowerCase().includes(text);
+        const inId = String(p.id).padStart(3,'0').includes(text);
+        const inDef = String(p.definition || '').toLowerCase().includes(text);
+        const textMatch = !text || inName || inId || inDef;
+
+        const types = Array.isArray(p.types) ? p.types : [];
+        const typeMatch = !type || types.includes(type);
+
+        return textMatch && typeMatch;
+      });
+
+      render(out);
+    }
+
+    q.oninput = applyFilters;
+    typeFilter.onchange = applyFilters;
+
+    if (!window.POKEMON) {
+      console.error('No se ha cargado data.js o POKEMON no está definido.');
+    }
+
+    render(Array.isArray(POKEMON) ? POKEMON : []);
+  </script>
+</body>
+</html>
