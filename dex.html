@@ -6,24 +6,115 @@
   <link rel="stylesheet" href="style.css">
   <title>Aionia Dex</title>
   <script src="data.js"></script>
+
+  <style>
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+      background: rgba(7,16,29,.82);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+
+    .site-nav {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 15px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .site-brand {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: .13em;
+    }
+
+    .site-links {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .site-links a,
+    .site-links span {
+      padding: 8px 11px;
+      border-radius: 10px;
+      color: #cbd6ec;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .site-links a:hover,
+    .site-links .active {
+      background: rgba(255,255,255,.08);
+      color: #fff;
+    }
+
+    .site-links .disabled {
+      opacity: .38;
+    }
+
+    .dex-tools {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 26px 22px 8px;
+      display: grid;
+      grid-template-columns: 1fr 260px 160px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .dex-tools-title {
+      font-weight: 900;
+      font-size: clamp(28px, 4vw, 42px);
+    }
+
+    @media (max-width: 760px) {
+      .site-nav {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .dex-tools {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
 </head>
 <body>
-  <header>
-    <div class="wrap">
-      <div class="bar">
-        <div class="title">🌊 Aionia Dex</div>
-        <input id="q" type="search" placeholder="Buscar por nombre, # o definición" autocomplete="off" />
-        <select id="typeFilter">
-          <option value="">Todos los tipos</option>
-          <option>Planta</option><option>Veneno</option><option>Fuego</option><option>Agua</option>
-          <option>Eléctrico</option><option>Psíquico</option><option>Siniestro</option><option>Roca</option>
-          <option>Lucha</option><option>Hielo</option><option>Tierra</option><option>Volador</option>
-          <option>Hada</option><option>Dragón</option><option>Normal</option><option>Bicho</option>
-          <option>Fantasma</option><option>Acero</option>
-        </select>
+  <header class="site-header">
+    <nav class="site-nav" aria-label="Navegación principal">
+      <a class="site-brand" href="index.html">AIONIA</a>
+      <div class="site-links">
+        <a href="index.html">Inicio</a>
+        <span class="active">Pokédex</span>
+        <span class="disabled">Personajes</span>
+        <a href="lugares.html">Lugares</a>
       </div>
-    </div>
+    </nav>
   </header>
+
+  <section class="dex-tools">
+    <div class="dex-tools-title">Pokédex de Aionia</div>
+    <input id="q" type="search" placeholder="Buscar por nombre, # o definición" autocomplete="off" />
+    <select id="typeFilter">
+      <option value="">Todos los tipos</option>
+      <option>Planta</option><option>Veneno</option><option>Fuego</option><option>Agua</option>
+      <option>Eléctrico</option><option>Psíquico</option><option>Siniestro</option><option>Roca</option>
+      <option>Lucha</option><option>Hielo</option><option>Tierra</option><option>Volador</option>
+      <option>Hada</option><option>Dragón</option><option>Normal</option><option>Bicho</option>
+      <option>Fantasma</option><option>Acero</option>
+    </select>
+  </section>
 
   <main>
     <div class="grid" id="grid"></div>
@@ -56,6 +147,11 @@
         const card = document.createElement('a');
         card.className = 'card dex-list-card';
         card.href = `pokemon.html?id=${p.id}`;
+        card.addEventListener('click', () => {
+          sessionStorage.setItem('aioniaDexScroll', String(window.scrollY));
+          sessionStorage.setItem('aioniaDexSearch', q.value);
+          sessionStorage.setItem('aioniaDexType', typeFilter.value);
+        });
 
         const types = Array.isArray(p.types) ? p.types : [];
         const chips = types
@@ -123,7 +219,22 @@
       console.error('No se ha cargado data.js o POKEMON no está definido.');
     }
 
-    render(Array.isArray(POKEMON) ? POKEMON : []);
+    const savedSearch = sessionStorage.getItem('aioniaDexSearch');
+    const savedType = sessionStorage.getItem('aioniaDexType');
+    const savedScroll = Number(sessionStorage.getItem('aioniaDexScroll') || 0);
+
+    if (savedSearch !== null) q.value = savedSearch;
+    if (savedType !== null) typeFilter.value = savedType;
+
+    applyFilters();
+
+    if (savedScroll > 0) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          window.scrollTo(0, savedScroll);
+        });
+      });
+    }
   </script>
 </body>
 </html>

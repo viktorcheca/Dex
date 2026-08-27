@@ -6,10 +6,170 @@
   <title>Ficha Pokémon – Aionia Dex</title>
   <link rel="stylesheet" href="style.css">
   <script src="data.js"></script>
+
+  <style>
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+      background: rgba(7,16,29,.82);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+
+    .site-nav {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 15px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .site-brand {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: .13em;
+    }
+
+    .site-links {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .site-links a,
+    .site-links span {
+      padding: 8px 11px;
+      border-radius: 10px;
+      color: #cbd6ec;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .site-links a:hover,
+    .site-links .active {
+      background: rgba(255,255,255,.08);
+      color: #fff;
+    }
+
+    .site-links .disabled {
+      opacity: .38;
+    }
+
+    .pokemon-right {
+      position: sticky;
+      top: 92px;
+    }
+
+    .pokemon-nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 40;
+
+      width: 46px;
+      height: 58px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 14px;
+      background: rgba(7,16,29,.9);
+      color: #eef5ff;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 30px;
+      font-weight: 900;
+      line-height: 1;
+      text-decoration: none;
+      box-shadow: 0 12px 28px rgba(0,0,0,.35);
+
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+
+    .pokemon-nav-arrow:hover {
+      transform: translateY(-50%) scale(1.06);
+      background: rgba(24,37,64,.97);
+      border-color: rgba(255,255,255,.32);
+    }
+
+    .pokemon-nav-arrow.prev-pokemon { left: -60px; }
+    .pokemon-nav-arrow.next-pokemon { right: -60px; }
+
+    .pokemon-nav-arrow.hidden {
+      display: none;
+    }
+
+    .pokemon-nav-caption {
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: #8493ad;
+      font-size: 12px;
+    }
+
+    .pokemon-nav-caption a {
+      color: #9fb1d1;
+      text-decoration: none;
+    }
+
+    .pokemon-nav-caption a:hover {
+      color: #fff;
+    }
+
+    @media (max-width: 760px) {
+      .site-nav {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .pokemon-right {
+        position: static;
+      }
+
+      .pokemon-nav-arrow.prev-pokemon {
+        left: 10px;
+        top: auto;
+        bottom: 10px;
+        transform: none;
+      }
+
+      .pokemon-nav-arrow.next-pokemon {
+        right: 10px;
+        top: auto;
+        bottom: 10px;
+        transform: none;
+      }
+
+      .pokemon-nav-arrow:hover {
+        transform: scale(1.05);
+      }
+    }
+  </style>
 </head>
+
 <body>
+  <header class="site-header">
+    <nav class="site-nav" aria-label="Navegación principal">
+      <a class="site-brand" href="index.html">AIONIA</a>
+      <div class="site-links">
+        <a href="index.html">Inicio</a>
+        <a class="active" href="dex.html">Pokédex</a>
+        <span class="disabled">Personajes</span>
+        <a href="lugares.html">Lugares</a>
+      </div>
+    </nav>
+  </header>
+
   <main class="pokemon-page">
-    <a class="back" href="index.html">← Volver a la Dex</a>
+    <a class="back" href="dex.html">← Volver a la Dex</a>
 
     <section class="pokemon-sheet">
       <div class="pokemon-left">
@@ -46,6 +206,8 @@
 
       <aside class="pokemon-right">
         <div class="pokemon-image-box">
+          <a id="prevPokemon" class="pokemon-nav-arrow prev-pokemon" aria-label="Pokémon anterior" title="Pokémon anterior">‹</a>
+
           <button
             id="shinyToggle"
             class="shiny-toggle"
@@ -54,14 +216,22 @@
             title="Mostrar versión shiny"
             style="display:none;"
           >✦</button>
+
           <button class="form-arrow form-prev" id="prevForm" type="button" aria-label="Forma anterior">‹</button>
           <img id="pokemonImg" alt="Imagen Pokémon">
           <button class="form-arrow form-next" id="nextForm" type="button" aria-label="Forma siguiente">›</button>
+
+          <a id="nextPokemon" class="pokemon-nav-arrow next-pokemon" aria-label="Pokémon siguiente" title="Pokémon siguiente">›</a>
         </div>
 
         <div class="form-selector" id="formSelector">
           <div class="form-label">Forma</div>
           <div class="form-name" id="formName"></div>
+        </div>
+
+        <div class="pokemon-nav-caption">
+          <a id="prevPokemonCaption"></a>
+          <a id="nextPokemonCaption"></a>
         </div>
       </aside>
     </section>
@@ -84,16 +254,12 @@
         ? p.forms.filter(f => f && f.image)
         : [];
 
-      if (forms.length) {
-        return forms;
-      }
+      if (forms.length) return forms;
 
-      return [
-        {
-          name: "Normal",
-          image: p?.image || "assets/img/_placeholder.png"
-        }
-      ];
+      return [{
+        name: "Normal",
+        image: p?.image || "assets/img/_placeholder.png"
+      }];
     }
 
     function getDisplayImage(p) {
@@ -102,28 +268,68 @@
 
     function getShinyPath(imagePath) {
       const dotIndex = imagePath.lastIndexOf(".");
-
-      if (dotIndex === -1) {
-        return `${imagePath}_shiny`;
-      }
-
+      if (dotIndex === -1) return `${imagePath}_shiny`;
       return `${imagePath.slice(0, dotIndex)}_shiny${imagePath.slice(dotIndex)}`;
     }
 
     function imageExists(src) {
       return new Promise(resolve => {
         const testImage = new Image();
-
         testImage.onload = () => resolve(true);
         testImage.onerror = () => resolve(false);
         testImage.src = src;
       });
     }
 
+    function orderedPokemon() {
+      return [...POKEMON]
+        .filter(p => Number.isFinite(Number(p.id)))
+        .sort((a, b) => Number(a.id) - Number(b.id));
+    }
+
+    function setupPokemonNavigation(current) {
+      const ordered = orderedPokemon();
+      const currentIndex = ordered.findIndex(p => p.id === current.id);
+
+      const previous = currentIndex > 0 ? ordered[currentIndex - 1] : null;
+      const next = currentIndex >= 0 && currentIndex < ordered.length - 1
+        ? ordered[currentIndex + 1]
+        : null;
+
+      const prevArrow = document.getElementById("prevPokemon");
+      const nextArrow = document.getElementById("nextPokemon");
+      const prevCaption = document.getElementById("prevPokemonCaption");
+      const nextCaption = document.getElementById("nextPokemonCaption");
+
+      if (previous) {
+        const href = `pokemon.html?id=${previous.id}`;
+        prevArrow.href = href;
+        prevArrow.title = `Anterior: #${String(previous.id).padStart(3,"0")} ${previous.name}`;
+        prevCaption.href = href;
+        prevCaption.textContent = `← #${String(previous.id).padStart(3,"0")} ${previous.name}`;
+      } else {
+        prevArrow.classList.add("hidden");
+        prevCaption.style.visibility = "hidden";
+      }
+
+      if (next) {
+        const href = `pokemon.html?id=${next.id}`;
+        nextArrow.href = href;
+        nextArrow.title = `Siguiente: #${String(next.id).padStart(3,"0")} ${next.name}`;
+        nextCaption.href = href;
+        nextCaption.textContent = `#${String(next.id).padStart(3,"0")} ${next.name} →`;
+      } else {
+        nextArrow.classList.add("hidden");
+        nextCaption.style.visibility = "hidden";
+      }
+
+      return { previous, next };
+    }
+
     if (!pokemon) {
-      document.body.innerHTML = `
+      document.body.innerHTML += `
         <main class="pokemon-page">
-          <a class="back" href="index.html">← Volver a la Dex</a>
+          <a class="back" href="dex.html">← Volver a la Dex</a>
           <h1>Pokémon no encontrado</h1>
         </main>`;
     } else {
@@ -133,6 +339,8 @@
       document.getElementById("pokemonName").textContent = pokemon.name;
       document.getElementById("pokemonDefinition").textContent = pokemon.definition || "";
       document.getElementById("pokemonDex").textContent = pokemon.dex_draft || "—";
+
+      const navigation = setupPokemonNavigation(pokemon);
 
       const img = document.getElementById("pokemonImg");
       const formSelector = document.getElementById("formSelector");
@@ -158,14 +366,10 @@
           hasShiny = await imageExists(shinyImage);
           shinyAvailability.set(shinyImage, hasShiny);
 
-          if (form !== forms[currentFormIndex]) {
-            return;
-          }
+          if (form !== forms[currentFormIndex]) return;
         }
 
-        if (!hasShiny) {
-          showingShiny = false;
-        }
+        if (!hasShiny) showingShiny = false;
 
         img.src = showingShiny && hasShiny ? shinyImage : normalImage;
         img.alt = `${pokemon.name} - ${form.name || "Normal"}${showingShiny ? " shiny" : ""}`;
@@ -292,13 +496,15 @@
       document.addEventListener("keydown", event => {
         const activeTag = document.activeElement?.tagName;
 
-        if (activeTag === "INPUT" || activeTag === "TEXTAREA" || document.activeElement?.isContentEditable) {
-          return;
-        }
+        if (
+          activeTag === "INPUT" ||
+          activeTag === "TEXTAREA" ||
+          document.activeElement?.isContentEditable
+        ) return;
 
         if (event.key === "Escape") {
           event.preventDefault();
-          window.location.href = "index.html";
+          window.location.href = "dex.html";
           return;
         }
 
@@ -310,15 +516,25 @@
           return;
         }
 
-        if (event.key === "ArrowLeft" && forms.length > 1) {
+        if (event.key === "ArrowLeft") {
           event.preventDefault();
-          prevForm.click();
+
+          if (forms.length > 1) {
+            prevForm.click();
+          } else if (navigation.previous) {
+            window.location.href = `pokemon.html?id=${navigation.previous.id}`;
+          }
           return;
         }
 
-        if (event.key === "ArrowRight" && forms.length > 1) {
+        if (event.key === "ArrowRight") {
           event.preventDefault();
-          nextForm.click();
+
+          if (forms.length > 1) {
+            nextForm.click();
+          } else if (navigation.next) {
+            window.location.href = `pokemon.html?id=${navigation.next.id}`;
+          }
         }
       });
     }
