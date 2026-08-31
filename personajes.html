@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personajes · Aionia</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="data-personajes.js"></script>
+
+  <style>
+    body {
+      min-height: 100vh;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(10px);
+      background: rgba(7,16,29,.82);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+
+    .site-nav {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 15px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .site-brand {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: .13em;
+    }
+
+    .site-links {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .site-links a,
+    .site-links span {
+      padding: 8px 11px;
+      border-radius: 10px;
+      color: #cbd6ec;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .site-links a:hover,
+    .site-links .active {
+      background: rgba(255,255,255,.08);
+      color: #fff;
+    }
+
+    .characters-page {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 46px 22px 90px;
+    }
+
+    .characters-intro {
+      margin-bottom: 28px;
+    }
+
+    .characters-kicker {
+      margin: 0 0 8px;
+      color: #d99af3;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .characters-intro h1 {
+      margin: 0;
+      font-size: clamp(42px, 7vw, 76px);
+      letter-spacing: -.04em;
+      line-height: .95;
+    }
+
+    .characters-intro p {
+      max-width: 760px;
+      margin: 17px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .characters-toolbar {
+      margin: 32px 0 18px;
+      max-width: 620px;
+    }
+
+    .characters-toolbar input {
+      width: 100%;
+    }
+
+    .characters-count {
+      margin: 0 0 16px;
+      color: #8795af;
+      font-size: 13px;
+    }
+
+    .characters-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .character-card {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      color: inherit;
+      text-decoration: none;
+      background: linear-gradient(180deg, var(--card), var(--card-2));
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+    }
+
+    .character-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255,255,255,.18);
+      box-shadow: 0 19px 42px rgba(0,0,0,.48);
+    }
+
+    .character-image-box {
+      position: relative;
+      aspect-ratio: 4 / 5;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(217,154,243,.14), transparent 35%),
+        #0b1327;
+    }
+
+    .character-image-box img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+      object-position: center bottom;
+    }
+
+    .character-image-box.no-image img {
+      display: none;
+    }
+
+    .character-image-box.no-image::after {
+      content: "AIONIA";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: rgba(255,255,255,.10);
+      font-size: clamp(24px, 5vw, 42px);
+      font-weight: 950;
+      letter-spacing: .18em;
+    }
+
+    .character-id {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 2;
+      padding: 6px 9px;
+      border-radius: 9px;
+      background: rgba(4,10,20,.78);
+      border: 1px solid rgba(255,255,255,.10);
+      color: #eef5ff;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .04em;
+      backdrop-filter: blur(6px);
+    }
+
+    .character-body {
+      padding: 17px 17px 18px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .character-title {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.12;
+    }
+
+    .character-description {
+      margin: 12px 0 0;
+      color: #9eabc3;
+      line-height: 1.52;
+      font-size: 13px;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+      overflow: hidden;
+    }
+
+    .character-action {
+      margin-top: auto;
+      padding-top: 17px;
+      color: #eef5ff;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .character-action .arrow {
+      display: inline-block;
+      transition: transform .15s ease;
+    }
+
+    .character-card:hover .character-action .arrow {
+      transform: translateX(4px);
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 60px 20px;
+      text-align: center;
+      border: 1px dashed rgba(255,255,255,.12);
+      border-radius: 20px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 1100px) {
+      .characters-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .site-nav {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .characters-page {
+        padding: 32px 16px 70px;
+      }
+
+      .characters-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 13px;
+      }
+
+      .character-body {
+        padding: 14px;
+      }
+
+      .character-title {
+        font-size: 19px;
+      }
+
+      .character-description {
+        -webkit-line-clamp: 3;
+      }
+    }
+
+    @media (max-width: 470px) {
+      .characters-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <nav class="site-nav" aria-label="Navegación principal">
+      <a class="site-brand" href="index.html">AIONIA</a>
+
+      <div class="site-links">
+        <a href="index.html">Inicio</a>
+        <a href="dex.html">Pokédex</a>
+        <span class="active">Personajes</span>
+        <a href="lugares.html">Lugares</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="characters-page">
+    <section class="characters-intro">
+      <p class="characters-kicker">Habitantes de Aionia</p>
+      <h1>Personajes</h1>
+      <p>
+        Líderes, investigadores, entrenadores y otras personas que forman parte
+        de la historia y la vida cotidiana de la región.
+      </p>
+    </section>
+
+    <section class="characters-toolbar" aria-label="Búsqueda de personajes">
+      <input
+        id="characterSearch"
+        type="search"
+        placeholder="Buscar por nombre, ID o descripción..."
+        autocomplete="off"
+      />
+    </section>
+
+    <p class="characters-count" id="charactersCount"></p>
+
+    <section class="characters-grid" id="charactersGrid"></section>
+  </main>
+
+  <script>
+    const $ = selector => document.querySelector(selector);
+
+    const grid = $('#charactersGrid');
+    const count = $('#charactersCount');
+    const search = $('#characterSearch');
+
+    const characters = Array.isArray(window.PERSONAJES)
+      ? window.PERSONAJES
+      : [];
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function cardTemplate(character) {
+      const id = escapeHtml(character.id);
+      const name = escapeHtml(character.nombre || character.id);
+      const description = escapeHtml(character.descripcion || '');
+      const image = escapeHtml(character.imagen || '');
+
+      return `
+        <a class="character-card" href="personaje.html?id=${encodeURIComponent(character.id)}">
+          <div class="character-image-box">
+            <img
+              src="${image}"
+              alt="${name}"
+              loading="lazy"
+            />
+            <span class="character-id">${id}</span>
+          </div>
+
+          <div class="character-body">
+            <h2 class="character-title">${name}</h2>
+
+            ${description
+              ? `<p class="character-description">${description}</p>`
+              : ''}
+
+            <div class="character-action">
+              Ver personaje <span class="arrow">→</span>
+            </div>
+          </div>
+        </a>
+      `;
+    }
+
+    function attachImageFallbacks() {
+      grid.querySelectorAll('.character-image-box img').forEach(img => {
+        img.addEventListener('error', () => {
+          img.parentElement.classList.add('no-image');
+        }, { once: true });
+
+        if (img.complete && img.naturalWidth === 0) {
+          img.parentElement.classList.add('no-image');
+        }
+      });
+    }
+
+    function render() {
+      const text = search.value
+        .trim()
+        .toLocaleLowerCase('es');
+
+      const filtered = characters.filter(character => {
+        const searchable = [
+          character.id,
+          character.nombre,
+          character.descripcion
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLocaleLowerCase('es');
+
+        return !text || searchable.includes(text);
+      });
+
+      count.textContent =
+        `${filtered.length} ${filtered.length === 1 ? 'personaje' : 'personajes'} encontrados`;
+
+      if (!filtered.length) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            No hay personajes que coincidan con la búsqueda.
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(cardTemplate).join('');
+      attachImageFallbacks();
+    }
+
+    search.addEventListener('input', render);
+
+    if (!characters.length) {
+      console.error(
+        'No se ha cargado data-personajes.js o PERSONAJES está vacío.'
+      );
+    }
+
+    render();
+  </script>
+</body>
+</html>
