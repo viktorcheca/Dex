@@ -8,202 +8,61 @@
 
   <style>
     body.home-page { min-height: 100vh; }
-
-    .home-header {
-      position: sticky; top: 0; z-index: 20;
-      backdrop-filter: blur(10px);
-      background: rgba(7,16,29,.78);
-      border-bottom: 1px solid rgba(255,255,255,.07);
-    }
-
-    .home-nav {
-      max-width: 1400px; margin: 0 auto; min-height: 74px;
-      padding: 0 24px; display: flex; align-items: center;
-      justify-content: space-between; gap: 24px;
-    }
-
-    .home-brand {
-      color: var(--text); text-decoration: none;
-      font-size: 22px; font-weight: 900; letter-spacing: .14em;
-    }
-
+    .home-header { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(10px); background: rgba(7,16,29,.78); border-bottom: 1px solid rgba(255,255,255,.07); }
+    .home-nav { max-width: 1400px; margin: 0 auto; min-height: 74px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .home-brand { color: var(--text); text-decoration: none; font-size: 22px; font-weight: 900; letter-spacing: .14em; }
     .home-links { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-
-    .home-links a, .home-links span {
-      color: #c9d5ed; text-decoration: none; font-size: 14px;
-      font-weight: 750; padding: 9px 12px; border-radius: 10px;
-    }
-
+    .home-links a, .home-links span { color: #c9d5ed; text-decoration: none; font-size: 14px; font-weight: 750; padding: 9px 12px; border-radius: 10px; }
     .home-links a:hover { color: #fff; background: rgba(255,255,255,.07); }
     .home-links .soon { opacity: .42; cursor: default; }
-
-    .home-main {
-      max-width: 1400px; margin: 0 auto;
-      padding: 74px 24px 100px;
-    }
-
-    .hero {
-      min-height: 360px; display: flex; flex-direction: column;
-      justify-content: center; align-items: flex-start; position: relative;
-      overflow: hidden; padding: 58px clamp(28px,6vw,86px);
-      border: 1px solid rgba(255,255,255,.08); border-radius: 30px;
-      background:
-        radial-gradient(circle at 78% 22%, rgba(115,209,205,.18), transparent 24%),
-        radial-gradient(circle at 88% 72%, rgba(65,132,199,.24), transparent 30%),
-        linear-gradient(135deg, rgba(14,31,53,.96), rgba(10,22,40,.93));
-      box-shadow: 0 28px 80px rgba(0,0,0,.32);
-    }
-
-    .hero::after {
-      content: ""; position: absolute; width: 360px; height: 360px;
-      right: -70px; bottom: -150px; border-radius: 50%;
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: 0 0 0 42px rgba(255,255,255,.018),
-                  0 0 0 92px rgba(255,255,255,.014);
-    }
-
-    .eyebrow {
-      margin: 0 0 14px; color: #7fd0d0; text-transform: uppercase;
-      letter-spacing: .24em; font-size: 12px; font-weight: 900;
-    }
-
-    .hero h1 {
-      margin: 0; font-size: clamp(58px,10vw,128px);
-      line-height: .86; letter-spacing: -.05em; max-width: 900px;
-    }
-
-    .hero-copy {
-      max-width: 650px; margin: 26px 0 0; color: #b8c6df;
-      font-size: clamp(16px,2vw,20px); line-height: 1.65;
-    }
-
-    .section-head {
-      margin: 62px 0 22px; display: flex; justify-content: space-between;
-      align-items: end; gap: 20px;
-    }
-
+    .home-main { max-width: 1400px; margin: 0 auto; padding: 74px 24px 100px; }
+    .hero { min-height: 360px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; position: relative; overflow: hidden; padding: 58px clamp(28px,6vw,86px); border: 1px solid rgba(255,255,255,.08); border-radius: 30px; background: radial-gradient(circle at 78% 22%, rgba(115,209,205,.18), transparent 24%), radial-gradient(circle at 88% 72%, rgba(65,132,199,.24), transparent 30%), linear-gradient(135deg, rgba(14,31,53,.96), rgba(10,22,40,.93)); box-shadow: 0 28px 80px rgba(0,0,0,.32); }
+    .hero::after { content: ""; position: absolute; width: 360px; height: 360px; right: -70px; bottom: -150px; border-radius: 50%; border: 1px solid rgba(255,255,255,.10); box-shadow: 0 0 0 42px rgba(255,255,255,.018), 0 0 0 92px rgba(255,255,255,.014); }
+    .eyebrow { margin: 0 0 14px; color: #7fd0d0; text-transform: uppercase; letter-spacing: .24em; font-size: 12px; font-weight: 900; }
+    .hero h1 { margin: 0; font-size: clamp(58px,10vw,128px); line-height: .86; letter-spacing: -.05em; max-width: 900px; }
+    .hero-copy { max-width: 650px; margin: 26px 0 0; color: #b8c6df; font-size: clamp(16px,2vw,20px); line-height: 1.65; }
+    .section-head { margin: 62px 0 22px; display: flex; justify-content: space-between; align-items: end; gap: 20px; }
     .section-head h2 { margin: 0; font-size: clamp(28px,4vw,44px); }
     .section-head p { margin: 0; color: var(--muted); }
-
-    .portal-grid {
-      display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 20px;
-    }
-
-    .portal {
-      min-height: 330px; position: relative; display: flex;
-      flex-direction: column; justify-content: flex-end; padding: 28px;
-      border-radius: 24px; overflow: hidden; color: inherit;
-      text-decoration: none; border: 1px solid rgba(255,255,255,.08);
-      background: linear-gradient(180deg,rgba(21,31,53,.95),rgba(11,20,37,.98));
-      box-shadow: var(--shadow);
-      transition: transform .18s ease,border-color .18s ease,box-shadow .18s ease;
-    }
-
-    .portal::before {
-      content: ""; position: absolute; inset: 0; opacity: .8;
-      transition: transform .22s ease,opacity .22s ease;
-    }
-
-    .portal-dex::before {
-      background: radial-gradient(circle at 72% 20%,rgba(94,176,255,.36),transparent 28%),
-                  linear-gradient(160deg,rgba(24,86,136,.25),transparent 65%);
-    }
-
-    .portal-characters::before {
-      background: radial-gradient(circle at 72% 20%,rgba(211,135,242,.28),transparent 28%),
-                  linear-gradient(160deg,rgba(132,72,171,.22),transparent 65%);
-    }
-
-    .portal-places::before {
-      background: radial-gradient(circle at 72% 20%,rgba(87,213,159,.28),transparent 28%),
-                  linear-gradient(160deg,rgba(46,132,97,.22),transparent 65%);
-    }
-
-    .portal:hover {
-      transform: translateY(-5px); border-color: rgba(255,255,255,.20);
-      box-shadow: 0 24px 56px rgba(0,0,0,.42);
-    }
-
+    .portal-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 20px; }
+    .portal { min-height: 330px; position: relative; display: flex; flex-direction: column; justify-content: flex-end; padding: 28px; border-radius: 24px; overflow: hidden; color: inherit; text-decoration: none; border: 1px solid rgba(255,255,255,.08); background: linear-gradient(180deg,rgba(21,31,53,.95),rgba(11,20,37,.98)); box-shadow: var(--shadow); transition: transform .18s ease,border-color .18s ease,box-shadow .18s ease; }
+    .portal::before { content: ""; position: absolute; inset: 0; opacity: .8; transition: transform .22s ease,opacity .22s ease; }
+    .portal-dex::before { background: radial-gradient(circle at 72% 20%,rgba(94,176,255,.36),transparent 28%), linear-gradient(160deg,rgba(24,86,136,.25),transparent 65%); }
+    .portal-characters::before { background: radial-gradient(circle at 72% 20%,rgba(211,135,242,.28),transparent 28%), linear-gradient(160deg,rgba(132,72,171,.22),transparent 65%); }
+    .portal-places::before { background: radial-gradient(circle at 72% 20%,rgba(87,213,159,.28),transparent 28%), linear-gradient(160deg,rgba(46,132,97,.22),transparent 65%); }
+    .portal:hover { transform: translateY(-5px); border-color: rgba(255,255,255,.20); box-shadow: 0 24px 56px rgba(0,0,0,.42); }
     .portal:hover::before { transform: scale(1.04); opacity: 1; }
-    .portal.disabled { cursor: default; }
-
-    .portal.disabled:hover {
-      transform: none; border-color: rgba(255,255,255,.08);
-      box-shadow: var(--shadow);
-    }
-
-    .portal-icon {
-      position: absolute; top: 28px; right: 28px; width: 74px; height: 74px;
-      display: grid; place-items: center; border-radius: 22px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.055); font-size: 34px; z-index: 1;
-    }
-
+    .portal-icon { position: absolute; top: 28px; right: 28px; width: 74px; height: 74px; display: grid; place-items: center; border-radius: 22px; border: 1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.055); font-size: 34px; z-index: 1; }
     .portal-content { position: relative; z-index: 1; }
-
-    .portal-kicker {
-      display: inline-block; margin-bottom: 10px; color: #96a8c8;
-      font-size: 12px; font-weight: 900; letter-spacing: .14em;
-      text-transform: uppercase;
-    }
-
+    .portal-kicker { display: inline-block; margin-bottom: 10px; color: #96a8c8; font-size: 12px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; }
     .portal h3 { margin: 0 0 10px; font-size: 32px; }
-
-    .portal p {
-      margin: 0; max-width: 360px; color: #aebbd2; line-height: 1.55;
-    }
-
-    .portal-action {
-      margin-top: 22px; display: inline-flex; align-items: center; gap: 8px;
-      color: #eef5ff; font-weight: 850;
-    }
-
+    .portal p { margin: 0; max-width: 360px; color: #aebbd2; line-height: 1.55; }
+    .portal-action { margin-top: 22px; display: inline-flex; align-items: center; gap: 8px; color: #eef5ff; font-weight: 850; }
     .portal-action .arrow { transition: transform .15s ease; }
     .portal:hover .portal-action .arrow { transform: translateX(4px); }
-    .portal.disabled .portal-action { color: #75829a; }
-
-    .home-footer {
-      margin-top: 72px; padding-top: 24px;
-      border-top: 1px solid rgba(255,255,255,.07);
-      color: #72819d; font-size: 13px;
-      display: flex; justify-content: space-between; gap: 16px;
-    }
-
-    @media (max-width: 900px) {
-      .portal-grid { grid-template-columns: 1fr; }
-      .portal { min-height: 245px; }
-    }
-
+    .home-footer { margin-top: 72px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.07); color: #72819d; font-size: 13px; display: flex; justify-content: space-between; gap: 16px; }
+    @media (max-width: 900px) { .portal-grid { grid-template-columns: 1fr; } .portal { min-height: 245px; } }
     @media (max-width: 650px) {
-      .home-nav {
-        min-height: auto; padding: 16px 18px; align-items: flex-start;
-        flex-direction: column; gap: 10px;
-      }
+      .home-nav { min-height: auto; padding: 16px 18px; align-items: flex-start; flex-direction: column; gap: 10px; }
       .home-links { width: 100%; }
       .home-links a, .home-links span { padding: 7px 8px; font-size: 13px; }
       .home-main { padding: 34px 16px 70px; }
       .hero { min-height: 330px; padding: 38px 24px; border-radius: 22px; }
       .hero h1 { font-size: clamp(56px,20vw,88px); }
-      .section-head {
-        margin-top: 42px; align-items: flex-start;
-        flex-direction: column; gap: 8px;
-      }
+      .section-head { margin-top: 42px; align-items: flex-start; flex-direction: column; gap: 8px; }
       .portal { padding: 22px; }
-      .portal-icon {
-        top: 22px; right: 22px; width: 62px; height: 62px; font-size: 28px;
-      }
+      .portal-icon { top: 22px; right: 22px; width: 62px; height: 62px; font-size: 28px; }
       .home-footer { flex-direction: column; }
     }
   </style>
 </head>
-
 <body class="home-page">
   <header class="home-header">
     <nav class="home-nav" aria-label="Navegación principal">
       <a class="home-brand" href="index.html">AIONIA</a>
       <div class="home-links">
         <a href="dex.html">Pokédex</a>
-        <span class="soon">Personajes</span>
+        <a href="personajes.html">Personajes</a>
         <a href="lugares.html">Lugares</a>
       </div>
     </nav>
@@ -213,10 +72,7 @@
     <section class="hero">
       <p class="eyebrow">Proyecto · Región Pokémon</p>
       <h1>Aionia</h1>
-      <p class="hero-copy">
-        Una región construida criatura a criatura, lugar a lugar y personaje a personaje.
-        Explora el mundo de Aionia y todo lo que ya forma parte de él.
-      </p>
+      <p class="hero-copy">Una región construida criatura a criatura, lugar a lugar y personaje a personaje. Explora el mundo de Aionia y todo lo que ya forma parte de él.</p>
     </section>
 
     <section aria-labelledby="explora-title">
@@ -239,15 +95,15 @@
           </div>
         </a>
 
-        <article class="portal portal-characters disabled">
+        <a class="portal portal-characters" href="personajes.html">
           <div class="portal-icon" aria-hidden="true">◇</div>
           <div class="portal-content">
             <span class="portal-kicker">Habitantes</span>
             <h3>Personajes</h3>
             <p>Líderes, investigadores, entrenadores y otras personas que dan forma a la historia de la región.</p>
-            <span class="portal-action">Próximamente</span>
+            <span class="portal-action">Explorar personajes <span class="arrow">→</span></span>
           </div>
-        </article>
+        </a>
 
         <a class="portal portal-places" href="lugares.html">
           <div class="portal-icon" aria-hidden="true">⌖</div>
