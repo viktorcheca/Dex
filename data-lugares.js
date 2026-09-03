@@ -465,7 +465,7 @@ const LUGARES = [
     "tipo": "Pueblo",
     "bioma": "Urbano",
     "salvajes": false,
-    "medalla": 3,
+    "medalla": null,
     "imagen": "imagenes/lugares/Z017.png",
     "servicios": {
       "centroPokemon": true,
@@ -597,7 +597,7 @@ const LUGARES = [
     "tipo": "Pueblo",
     "bioma": "Urbano",
     "salvajes": false,
-    "medalla": 4,
+    "medalla": 3,
     "imagen": "imagenes/lugares/Z023.png",
     "servicios": {
       "centroPokemon": true,
@@ -685,7 +685,7 @@ const LUGARES = [
     "tipo": "Pueblo",
     "bioma": "Urbano",
     "salvajes": false,
-    "medalla": null,
+    "medalla": 4,
     "imagen": "imagenes/lugares/Z027.png",
     "servicios": {
       "centroPokemon": true,
