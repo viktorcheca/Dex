@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lugar · Aionia</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="data.js"></script>
+  <script src="data-lugares.js"></script>
+
+  <style>
+    .site-header {
+      position: sticky; top: 0; z-index: 40;
+      backdrop-filter: blur(10px);
+      background: rgba(7,16,29,.82);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+
+    .site-nav {
+      max-width: 1400px; margin: 0 auto; padding: 15px 22px;
+      display: flex; align-items: center; justify-content: space-between; gap: 18px;
+    }
+
+    .site-brand {
+      color: var(--text); text-decoration: none; font-size: 20px;
+      font-weight: 900; letter-spacing: .13em;
+    }
+
+    .site-links { display: flex; gap: 7px; flex-wrap: wrap; }
+
+    .site-links a, .site-links span {
+      padding: 8px 11px; border-radius: 10px; color: #cbd6ec;
+      text-decoration: none; font-size: 14px; font-weight: 750;
+    }
+
+    .site-links a:hover, .site-links .active {
+      background: rgba(255,255,255,.08); color: #fff;
+    }
+
+    .place-page {
+      max-width: 1250px; margin: 0 auto; padding: 36px 22px 90px;
+    }
+
+    .back-link {
+      display: inline-block; margin-bottom: 24px; color: #9fb1d1;
+      text-decoration: none; font-weight: 800;
+    }
+
+    .back-link:hover { color: #fff; }
+
+    .place-hero {
+      display: grid; grid-template-columns: minmax(0,1.25fr) minmax(320px,.75fr);
+      gap: 28px; align-items: stretch;
+    }
+
+    .place-image-box {
+      min-height: 390px; position: relative; overflow: hidden;
+      border-radius: 26px; border: 1px solid rgba(255,255,255,.08);
+      background: #0b1327; box-shadow: var(--shadow);
+    }
+
+    .place-image-box img {
+      width: 100%; height: 100%; display: block; object-fit: cover;
+    }
+
+    .place-image-box.no-image img { display: none; }
+
+    .place-image-box.no-image::after {
+      content: "AIONIA"; position: absolute; inset: 0; display: grid;
+      place-items: center; color: rgba(255,255,255,.10);
+      font-size: clamp(34px,8vw,76px); font-weight: 950; letter-spacing: .18em;
+    }
+
+    .place-info {
+      padding: 30px; border-radius: 26px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg,var(--card),var(--card-2));
+      box-shadow: var(--shadow);
+    }
+
+    .place-id {
+      margin-bottom: 10px; color: #75d1ad; font-size: 13px;
+      font-weight: 900; letter-spacing: .14em;
+    }
+
+    .place-info h1 {
+      margin: 0; font-size: clamp(38px,5vw,64px);
+      letter-spacing: -.04em; line-height: .98;
+    }
+
+    .tags, .services {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+
+    .tags { margin-top: 18px; }
+
+    .tag, .service {
+      padding: 7px 10px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.055); color: #cbd7eb;
+      font-size: 12px; font-weight: 800;
+    }
+
+    .tag.medal {
+      color: #ffd66d; border-color: rgba(255,207,91,.18);
+      background: rgba(255,207,91,.08);
+    }
+
+    .place-description {
+      margin: 22px 0 0; color: #b3c0d7; font-size: 16px;
+      line-height: 1.72;
+    }
+
+    .section {
+      margin-top: 28px; padding: 26px; border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: linear-gradient(180deg,var(--card),var(--card-2));
+      box-shadow: var(--shadow);
+    }
+
+    .section h2 { margin: 0 0 18px; font-size: 25px; }
+
+    .services { margin-top: 4px; }
+
+    .empty {
+      margin: 0; color: var(--muted); line-height: 1.6;
+    }
+
+    .encounter-group + .encounter-group { margin-top: 28px; }
+
+    .encounter-group h3 {
+      margin: 0 0 12px; font-size: 17px; color: #dce7f9;
+    }
+
+    .encounter-grid {
+      display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px;
+    }
+
+    .encounter-card {
+      display: grid; grid-template-columns: 72px 1fr; gap: 12px;
+      align-items: center; padding: 12px; border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.035); color: inherit;
+      text-decoration: none;
+    }
+
+    .encounter-card:hover {
+      border-color: rgba(255,255,255,.18);
+      background: rgba(255,255,255,.055);
+    }
+
+    .encounter-thumb {
+      width: 72px; height: 72px; display: grid; place-items: center;
+      overflow: hidden; border-radius: 12px; background: #0b1327;
+    }
+
+    .encounter-thumb img {
+      width: 100%; height: 100%; object-fit: contain;
+    }
+
+    .encounter-name {
+      font-size: 15px; font-weight: 900; line-height: 1.15;
+    }
+
+    .encounter-id {
+      margin-top: 3px; color: #8191ad; font-size: 11px;
+    }
+
+    .encounter-meta {
+      margin-top: 8px; display: flex; flex-wrap: wrap; gap: 5px;
+    }
+
+    .encounter-meta span, .type-chip {
+      padding: 4px 7px; border-radius: 7px;
+      background: rgba(255,255,255,.055);
+      color: #aebcd3; font-size: 10px; font-weight: 750;
+    }
+
+    .type-row { margin-top: 7px; display: flex; gap: 5px; flex-wrap: wrap; }
+
+    @media (max-width: 900px) {
+      .place-hero { grid-template-columns: 1fr; }
+      .place-image-box { min-height: 300px; }
+      .encounter-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    }
+
+    @media (max-width: 620px) {
+      .site-nav { align-items: flex-start; flex-direction: column; }
+      .place-page { padding: 28px 16px 70px; }
+      .place-info, .section { padding: 20px; }
+      .encounter-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <nav class="site-nav" aria-label="Navegación principal">
+      <a class="site-brand" href="index.html">AIONIA</a>
+      <div class="site-links">
+        <a href="index.html">Inicio</a>
+        <a href="dex.html">Pokédex</a>
+        <a href="personajes.html">Personajes</a>
+        <a class="active" href="lugares.html">Lugares</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="place-page" id="page">
+    <a class="back-link" href="lugares.html">← Volver a Lugares</a>
+    <div id="content"></div>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const id = String(params.get('id') || '').toUpperCase();
+    const places = Array.isArray(window.LUGARES) ? window.LUGARES : [];
+    const pokemonData = Array.isArray(window.POKEMON) ? window.POKEMON : [];
+    const place = places.find(p => String(p.id).toUpperCase() === id);
+    const content = document.getElementById('content');
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&','&amp;').replaceAll('<','&lt;')
+        .replaceAll('>','&gt;').replaceAll('"','&quot;')
+        .replaceAll("'",'&#039;');
+    }
+
+    function pokemonById(id) {
+      return pokemonData.find(p => Number(p.id) === Number(id));
+    }
+
+    function pokemonImage(p) {
+      if (!p) return 'assets/img/_placeholder.png';
+      if (Array.isArray(p.forms) && p.forms.length && p.forms[0]?.image) return p.forms[0].image;
+      return p.image || 'assets/img/_placeholder.png';
+    }
+
+    function serviceLabels(servicios = {}) {
+      const map = {
+        centroPokemon: 'Centro Pokémon',
+        tienda: 'Tienda',
+        gimnasio: 'Gimnasio',
+        puerto: 'Puerto',
+        investigacion: 'Investigación',
+        observatorio: 'Observatorio',
+        mercado: 'Mercado',
+        guarderia: 'Guardería',
+        hotel: 'Hotel'
+      };
+      return Object.entries(map)
+        .filter(([key]) => Boolean(servicios[key]))
+        .map(([,label]) => label);
+    }
+
+    function groupEncounters(encounters = []) {
+      return encounters.reduce((groups, encounter) => {
+        const key = encounter.entorno || 'Encuentros';
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(encounter);
+        return groups;
+      }, {});
+    }
+
+    function encounterCard(e) {
+      const p = pokemonById(e.pokemonId);
+      const name = p?.name || e.pokemon || `Pokémon #${e.pokemonId}`;
+      const types = Array.isArray(p?.types) ? p.types : [];
+      const level = e.nivelMin === e.nivelMax
+        ? `Nv. ${e.nivelMin}`
+        : `Nv. ${e.nivelMin}–${e.nivelMax}`;
+
+      return `
+        <a class="encounter-card" href="pokemon.html?id=${encodeURIComponent(e.pokemonId)}">
+          <div class="encounter-thumb">
+            <img src="${escapeHtml(pokemonImage(p))}" alt="${escapeHtml(name)}"
+                 onerror="this.src='assets/img/_placeholder.png'">
+          </div>
+          <div>
+            <div class="encounter-name">${escapeHtml(name)}</div>
+            <div class="encounter-id">#${String(e.pokemonId).padStart(3,'0')}</div>
+            ${types.length ? `<div class="type-row">${types.map(t => `<span class="type-chip">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+            <div class="encounter-meta">
+              <span>${escapeHtml(e.aparicion)}%</span>
+              <span>${escapeHtml(level)}</span>
+              ${e.turno ? `<span>${escapeHtml(e.turno)}</span>` : ''}
+            </div>
+          </div>
+        </a>
+      `;
+    }
+
+    if (!place) {
+      document.title = 'Lugar no encontrado · Aionia';
+      content.innerHTML = `
+        <section class="section">
+          <h1>Lugar no encontrado</h1>
+          <p class="empty">No existe ningún lugar con el código ${escapeHtml(id || 'indicado')}.</p>
+        </section>`;
+    } else {
+      document.title = `${place.nombre} · Aionia`;
+
+      const services = serviceLabels(place.servicios);
+      const grouped = groupEncounters(place.encuentros || []);
+
+      const encounterHtml = Object.keys(grouped).length
+        ? Object.entries(grouped).map(([environment, encounters]) => `
+            <div class="encounter-group">
+              <h3>${escapeHtml(environment)}</h3>
+              <div class="encounter-grid">
+                ${encounters.map(encounterCard).join('')}
+              </div>
+            </div>
+          `).join('')
+        : `<p class="empty">Todavía no hay encuentros registrados para este lugar.</p>`;
+
+      content.innerHTML = `
+        <section class="place-hero">
+          <div class="place-image-box" id="placeImageBox">
+            <img id="placeImage" src="${escapeHtml(place.imagen || '')}" alt="${escapeHtml(place.nombre)}">
+          </div>
+
+          <div class="place-info">
+            <div class="place-id">${escapeHtml(place.id)}</div>
+            <h1>${escapeHtml(place.nombre)}</h1>
+
+            <div class="tags">
+              ${place.tipo ? `<span class="tag">${escapeHtml(place.tipo)}</span>` : ''}
+              ${place.bioma ? `<span class="tag">${escapeHtml(place.bioma)}</span>` : ''}
+              ${place.medalla ? `<span class="tag medal">Medalla ${escapeHtml(place.medalla)}</span>` : ''}
+              ${place.salvajes ? `<span class="tag">Pokémon salvajes</span>` : ''}
+            </div>
+
+            <p class="place-description">${escapeHtml(place.descripcion || '')}</p>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Servicios</h2>
+          ${services.length
+            ? `<div class="services">${services.map(s => `<span class="service">${escapeHtml(s)}</span>`).join('')}</div>`
+            : `<p class="empty">Este lugar no tiene servicios registrados.</p>`}
+        </section>
+
+        <section class="section">
+          <h2>Pokémon salvajes</h2>
+          ${encounterHtml}
+        </section>
+      `;
+
+      const img = document.getElementById('placeImage');
+      const box = document.getElementById('placeImageBox');
+      img.addEventListener('error', () => box.classList.add('no-image'), { once: true });
+      if (img.complete && img.naturalWidth === 0) box.classList.add('no-image');
+    }
+  </script>
+</body>
+</html>
