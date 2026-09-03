@@ -216,7 +216,10 @@
     const params = new URLSearchParams(location.search);
     const id = String(params.get('id') || '').toUpperCase();
     const places = Array.isArray(window.LUGARES) ? window.LUGARES : [];
-    const pokemonData = Array.isArray(window.POKEMON) ? window.POKEMON : [];
+    const pokemonData =
+      typeof POKEMON !== 'undefined' && Array.isArray(POKEMON)
+        ? POKEMON
+        : [];
     const place = places.find(p => String(p.id).toUpperCase() === id);
     const content = document.getElementById('content');
 
