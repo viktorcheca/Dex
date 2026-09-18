@@ -25,7 +25,7 @@ const PERSONAJES = [
   },
   {
     "id": "P004",
-    "nombre": "Prof. Nomeacuerdo",
+    "nombre": "Prof. Elden",
     "descripcion": "El profesor Elden es uno de los principales investigadores Pokémon de Aionia. Naturalista de vocación, dedica su trabajo al estudio de la relación entre los Pokémon, los ecosistemas que habitan y los cambios que han dado forma a la región. Su curiosidad va mucho más allá de la biología: también siente una profunda fascinación por la astronomía y por la posible influencia de los fenómenos celestes sobre la vida en Aionia. Es él quien acompaña los primeros pasos de nuevos entrenadores y les anima a observar el mundo con tanta atención como a sus propios Pokémon.",
     "imagen": "imagenes/personajes/P004.png"
   }
