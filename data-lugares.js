@@ -470,7 +470,7 @@ const LUGARES = [
     "servicios": {
       "centroPokemon": true,
       "tienda": true,
-      "gimnasio": true,
+      "gimnasio": false,
       "puerto": false,
       "investigacion": false,
       "observatorio": false,
@@ -690,7 +690,7 @@ const LUGARES = [
     "servicios": {
       "centroPokemon": true,
       "tienda": true,
-      "gimnasio": false,
+      "gimnasio": true,
       "puerto": false,
       "investigacion": false,
       "observatorio": false,
